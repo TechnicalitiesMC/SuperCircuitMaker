@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[37,)"
+license="All rights reserved"
+
+[[mods]]
+modId="supercircuitmaker"
+version="${file.jarVersion}"
+displayName="Super Circuit Maker"
+authors="amadornes"
+description='''
+Tiny Circuits Galore!
+'''
+
+[[dependencies.supercircuitmaker]]
+    modId="forge"
+    mandatory=true
+    versionRange="[37,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.supercircuitmaker]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.17.1,1.18)"
+    ordering="NONE"
+    side="BOTH"

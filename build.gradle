@@ -1,0 +1,124 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+version = "${_mcversion}_${_version}"
+group = 'com.technicalitiesmc'
+archivesBaseName = 'SuperCircuitMaker'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+mixin {
+    add sourceSets.main, 'supercircuitmaker.mixin.json'
+}
+
+minecraft {
+    mappings channel: 'official', version: _mcversion
+
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+
+            arg '-mixin.config=supercircuitmaker.mixin.json'
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                supercircuitmaker {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+
+            arg '-mixin.config=supercircuitmaker.mixin.json'
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                supercircuitmaker {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run/data')
+
+            arg '-mixin.config=supercircuitmaker.mixin.json'
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'supercircuitmaker', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                supercircuitmaker {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven' }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${_mcversion}-${_forgeversion}"
+
+    implementation fg.deobf("com.technicalitiesmc:lib:${_mcversion}_${_libversion}")
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest.attributes([
+        'Specification-Title'     : 'supercircuitmaker',
+        'Specification-Vendor'    : 'amadornes',
+        'Specification-Version'   : '1',
+        'Implementation-Title'    : project.name,
+        'Implementation-Version'  : project.jar.archiveVersion,
+        'Implementation-Vendor'   : 'amadornes',
+        'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        'MixinConfigs'            : 'supercircuitmaker.mixin.json'
+    ])
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'lib'
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${rootProject.projectDir}/mcmodsrepo"
+        }
+    }
+}
