@@ -1,0 +1,21 @@
+{
+  "textures": {
+    "circuit": "minecraft:block/smooth_stone",
+    "side": "minecraft:block/smooth_stone",
+    "particle": "minecraft:block/smooth_stone"
+  },
+  "elements": [
+    {
+      "from": [  0,  0,  0 ],
+      "to":   [ 16,  2, 16 ],
+      "faces": {
+        "down":  { "texture": "#circuit", "cullface": "down" },
+        "up":    { "texture": "#circuit"                     },
+        "north": { "texture": "#side"                        },
+        "south": { "texture": "#side"                        },
+        "west":  { "texture": "#side"                        },
+        "east":  { "texture": "#side"                        }
+      }
+    }
+  ]
+}

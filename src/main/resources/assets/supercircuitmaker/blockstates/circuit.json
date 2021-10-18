@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "face=down":  { "model": "supercircuitmaker:block/circuit" },
+    "face=up":    { "model": "supercircuitmaker:block/circuit", "x": 180 },
+    "face=north": { "model": "supercircuitmaker:block/circuit", "x": 270 },
+    "face=south": { "model": "supercircuitmaker:block/circuit", "x": 90 },
+    "face=west":  { "model": "supercircuitmaker:block/circuit", "x": 90, "y": 90 },
+    "face=east":  { "model": "supercircuitmaker:block/circuit", "x": 90, "y": 270 }
+  }
+}
