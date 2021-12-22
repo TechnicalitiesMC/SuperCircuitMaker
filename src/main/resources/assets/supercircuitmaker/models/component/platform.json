@@ -1,7 +1,7 @@
 {
   "parent": "supercircuitmaker:component/_plate",
   "textures": {
-    "top": "supercircuitmaker:component/base",
-    "side": "supercircuitmaker:component/base"
+    "top": "supercircuitmaker:component/platform",
+    "side": "supercircuitmaker:component/platform"
   }
 }
