@@ -104,9 +104,11 @@ public class CircuitTile {
 
     public boolean remove(ComponentPos pos, ComponentSlot slot) {
         var index = getIndex(pos, slot);
-        if (components[index] == null) {
+        var c = components[index];
+        if (c == null) {
             return false;
         }
+        c.beforeRemove();
         components[index] = null;
         componentPositions.clear(index);
         syncQueue.set(index);
@@ -122,8 +124,11 @@ public class CircuitTile {
         cleared.and(section.getBits());
         cleared.stream().forEach(i -> {
             var c = components[i];
-            if (c != null && context != null) {
-                c.spawnDrops(context);
+            if (c != null) {
+                if (context != null) {
+                    c.spawnDrops(context);
+                }
+                c.beforeRemove();
             }
             components[i] = null;
         });

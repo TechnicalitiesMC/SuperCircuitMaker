@@ -298,7 +298,6 @@ public class Circuit extends SavedData {
         }
         var component = tile.get(unpacked.pos(), slot);
         if (component != null) {
-            component.beforeRemove();
             if (tile.remove(unpacked.pos(), slot)) {
                 setDirty();
                 return true;
