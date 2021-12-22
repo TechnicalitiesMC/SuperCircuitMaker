@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 
 version = "${_mcversion}_${_version}"
 group = 'com.technicalitiesmc'
-archivesBaseName = 'SuperCircuitMaker'
+archivesBaseName = 'SuperCircuitMaker2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
