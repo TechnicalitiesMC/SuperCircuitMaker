@@ -1,0 +1,70 @@
+{
+  "textures": {
+    "post": "minecraft:block/oak_log",
+    "top": "minecraft:block/oak_log_top",
+    "wire": "supercircuitmaker:component/wire",
+    "particle": "supercircuitmaker:component/wire"
+  },
+  "elements":[
+    {
+      "from": [ 1, 0,     1 ],
+      "to":   [ 3, 16.01, 3 ],
+      "faces": {
+        "down":  { "texture": "#top"  },
+        "up":    { "texture": "#top"  },
+        "north": { "texture": "#post" },
+        "south": { "texture": "#post" },
+        "west":  { "texture": "#post" },
+        "east":  { "texture": "#post" }
+      }
+    },
+    {
+      "from": [ 13, 0,     1 ],
+      "to":   [ 15, 16.01, 3 ],
+      "faces": {
+        "down":  { "texture": "#top"  },
+        "up":    { "texture": "#top"  },
+        "north": { "texture": "#post" },
+        "south": { "texture": "#post" },
+        "west":  { "texture": "#post" },
+        "east":  { "texture": "#post" }
+      }
+    },
+    {
+      "from": [ 13, 0,     13 ],
+      "to":   [ 15, 16.01, 15 ],
+      "faces": {
+        "down":  { "texture": "#top"  },
+        "up":    { "texture": "#top"  },
+        "north": { "texture": "#post" },
+        "south": { "texture": "#post" },
+        "west":  { "texture": "#post" },
+        "east":  { "texture": "#post" }
+      }
+    },
+    {
+      "from": [ 1, 0,     13 ],
+      "to":   [ 3, 16.01, 15 ],
+      "faces": {
+        "down":  { "texture": "#top"  },
+        "up":    { "texture": "#top"  },
+        "north": { "texture": "#post" },
+        "south": { "texture": "#post" },
+        "west":  { "texture": "#post" },
+        "east":  { "texture": "#post" }
+      }
+    },
+    {
+      "from": [ 6.75, 0,     6.75 ],
+      "to":   [ 9.25, 16.01, 9.25 ],
+      "faces": {
+        "down":  { "texture": "#wire" },
+        "up":    { "texture": "#wire" },
+        "north": { "texture": "#wire" },
+        "south": { "texture": "#wire" },
+        "west":  { "texture": "#wire" },
+        "east":  { "texture": "#wire" }
+      }
+    }
+  ]
+}

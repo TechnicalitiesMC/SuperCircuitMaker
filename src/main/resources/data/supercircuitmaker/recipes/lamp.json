@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RLR",
+    "RDR"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "L": { "item": "minecraft:redstone_lamp" },
+    "D": { "item": "minecraft:deepslate" }
+  },
+  "result": {
+    "item": "supercircuitmaker:lamp",
+    "count": 4
+  }
+}

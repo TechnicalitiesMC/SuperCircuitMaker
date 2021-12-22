@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "on=false": { "model": "supercircuitmaker:component/delay_off" },
+    "on=true":  { "model": "supercircuitmaker:component/delay_on"  }
+  }
+}

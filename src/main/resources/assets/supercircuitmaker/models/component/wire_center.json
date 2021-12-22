@@ -1,0 +1,31 @@
+{
+  "textures": {
+    "wire": "supercircuitmaker:component/wire",
+    "particle": "supercircuitmaker:component/wire",
+    "base": "supercircuitmaker:component/base"
+  },
+  "elements":[
+    {
+      "from": [  6, 0,  6 ],
+      "to":   [ 10, 2, 10 ],
+      "faces": {
+        "up":    { "texture": "#wire", "tintindex": 1 },
+        "north": { "texture": "#wire", "tintindex": 1 },
+        "south": { "texture": "#wire", "tintindex": 1 },
+        "west":  { "texture": "#wire", "tintindex": 1 },
+        "east":  { "texture": "#wire", "tintindex": 1 }
+      }
+    },
+    {
+      "from": [  4, 0,  4 ],
+      "to":   [ 12, 1, 12 ],
+      "faces": {
+        "up":    { "texture": "#base", "tintindex": 0 },
+        "north": { "texture": "#base", "tintindex": 0 },
+        "south": { "texture": "#base", "tintindex": 0 },
+        "west":  { "texture": "#base", "tintindex": 0 },
+        "east":  { "texture": "#base", "tintindex": 0 }
+      }
+    }
+  ]
+}

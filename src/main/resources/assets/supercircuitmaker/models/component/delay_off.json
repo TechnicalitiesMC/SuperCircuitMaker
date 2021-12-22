@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:component/_button",
+  "textures": {
+    "button": "supercircuitmaker:component/delay_off"
+  }
+}

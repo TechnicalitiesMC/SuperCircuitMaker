@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RBR",
+    "RDR"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "B": { "item": "minecraft:stone_button" },
+    "D": { "item": "minecraft:deepslate" }
+  },
+  "result": {
+    "item": "supercircuitmaker:button",
+    "count": 4
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:stick" },
+    { "item": "supercircuitmaker:tiny_redstone" }
+  ],
+  "result": {
+    "item": "supercircuitmaker:redstone_stick",
+    "count": 1
+  }
+}

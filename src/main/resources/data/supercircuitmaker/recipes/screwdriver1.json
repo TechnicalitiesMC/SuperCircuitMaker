@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "screwdriver",
+  "pattern": [
+    "R  ",
+    " L ",
+    "  I"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "L": { "item": "minecraft:lapis_lazuli" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "result": {
+    "item": "supercircuitmaker:screwdriver",
+    "count": 1
+  }
+}

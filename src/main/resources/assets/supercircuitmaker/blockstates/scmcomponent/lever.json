@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "rotated=false,on=false": {
+      "model": "supercircuitmaker:component/lever",
+      "y": 270
+    },
+    "rotated=false,on=true": {
+      "model": "supercircuitmaker:component/lever_on",
+      "y": 270
+    },
+    "rotated=true,on=false": {
+      "model": "supercircuitmaker:component/lever"
+    },
+    "rotated=true,on=true": {
+      "model": "supercircuitmaker:component/lever_on"
+    }
+  }
+}

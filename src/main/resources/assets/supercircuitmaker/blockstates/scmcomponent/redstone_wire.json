@@ -1,0 +1,63 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "supercircuitmaker:component/wire_center"
+      }
+    },
+    {
+      "when": { "neg_x": "anode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_anode"
+      }
+    },
+    {
+      "when": { "neg_x": "cathode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_cathode"
+      }
+    },
+    {
+      "when": { "pos_x": "anode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_anode",
+        "y": 180
+      }
+    },
+    {
+      "when": { "pos_x": "cathode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_cathode",
+        "y": 180
+      }
+    },
+    {
+      "when": { "neg_z": "anode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_anode",
+        "y": 90
+      }
+    },
+    {
+      "when": { "neg_z": "cathode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_cathode",
+        "y": 90
+      }
+    },
+    {
+      "when": { "pos_z": "anode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_anode",
+        "y": 270
+      }
+    },
+    {
+      "when": { "pos_z": "cathode" },
+      "apply": {
+        "model": "supercircuitmaker:component/wire_cathode",
+        "y": 270
+      }
+    }
+  ]
+}

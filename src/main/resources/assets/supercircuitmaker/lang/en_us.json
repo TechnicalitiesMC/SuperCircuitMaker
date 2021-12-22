@@ -1,0 +1,27 @@
+{
+  "itemGroup.supercircuitmaker": "Super Circuit Maker",
+
+  "block.supercircuitmaker.circuit": "Circuit",
+  "item.supercircuitmaker.screwdriver": "Screwdriver",
+  "item.supercircuitmaker.tiny_redstone": "Tiny Pile of Redstone Dust",
+  "item.supercircuitmaker.randomizer": "Glowstone Exciter",
+  "item.supercircuitmaker.delay": "Quartz Resonator",
+  "item.supercircuitmaker.pulsar": "Ender Pulsar",
+  "item.supercircuitmaker.lamp": "Miniature Lamp",
+  "item.supercircuitmaker.button": "Miniature Button",
+  "item.supercircuitmaker.platform": "Support Platform",
+  "item.supercircuitmaker.redstone_stick": "Redstone-Impregnated Stick",
+
+  "container.supercircuitmaker.delay": "Quartz Resonator: ",
+  "container.supercircuitmaker.pulsar": "Ender Pulsar: ",
+  "container.supercircuitmaker.timing.dec_10s": "-10s",
+  "container.supercircuitmaker.timing.dec_1s": "-1s",
+  "container.supercircuitmaker.timing.inc_1s": "+1s",
+  "container.supercircuitmaker.timing.inc_10s": "+10s",
+  "container.supercircuitmaker.timing.dec_10t": "-10t",
+  "container.supercircuitmaker.timing.dec_1t": "-1t",
+  "container.supercircuitmaker.timing.inc_1t": "+1t",
+  "container.supercircuitmaker.timing.inc_10t": "+10t",
+
+  "subtitles.supercircuitmaker.place": "BOOP"
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:component/_button_pressed",
+  "textures": {
+    "button": "supercircuitmaker:component/base"
+  }
+}

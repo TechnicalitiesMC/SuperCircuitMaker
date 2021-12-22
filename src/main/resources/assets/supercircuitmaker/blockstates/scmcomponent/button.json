@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "on=false": { "model": "supercircuitmaker:component/button_off" },
+    "on=true":  { "model": "supercircuitmaker:component/button_on"  }
+  }
+}

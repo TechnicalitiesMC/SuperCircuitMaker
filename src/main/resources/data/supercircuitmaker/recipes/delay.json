@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RQR",
+    "RDR"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "Q": { "item": "minecraft:quartz_block" },
+    "D": { "item": "minecraft:deepslate" }
+  },
+  "result": {
+    "item": "supercircuitmaker:delay",
+    "count": 4
+  }
+}

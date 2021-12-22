@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:component/_torch",
+  "textures": {
+    "torch": "minecraft:block/redstone_torch_off"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "values": [
+    "supercircuitmaker:tiny_redstone",
+    "supercircuitmaker:randomizer",
+    "supercircuitmaker:delay",
+    "supercircuitmaker:pulsar",
+    "supercircuitmaker:lamp",
+    "supercircuitmaker:button",
+    "supercircuitmaker:platform",
+    "supercircuitmaker:redstone_stick",
+    "minecraft:redstone_torch",
+    "minecraft:lever"
+  ]
+}

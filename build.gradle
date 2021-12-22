@@ -18,7 +18,7 @@ version = "${_mcversion}_${_version}"
 group = 'com.technicalitiesmc'
 archivesBaseName = 'SuperCircuitMaker'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 mixin {
     add sourceSets.main, 'supercircuitmaker.mixin.json'
@@ -27,7 +27,7 @@ mixin {
 minecraft {
     mappings channel: 'official', version: _mcversion
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
