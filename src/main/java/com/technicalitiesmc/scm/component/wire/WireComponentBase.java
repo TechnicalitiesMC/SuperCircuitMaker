@@ -82,6 +82,11 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
     public void beforeRemove() {
         super.beforeRemove();
         invalidateNetworks();
+        for (var side : getConnectableSides()) {
+            if (getState(side).isWire() && getConnectionTarget(side) instanceof WireComponentBase<?> wire) {
+                wire.setState(side.getOpposite(), WireConnectionState.DISCONNECTED);
+            }
+        }
     }
 
     @Override
@@ -113,7 +118,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
             }
 
             // If there is no neighbor
-            if (neighbor == null) {
+            if (neighbor == null || (state.isWire() && neighbor.getInterface(neighborSide, state.getTargetInterface()) == null)) {
                 // And it wasn't disconnected
                 if (state != WireConnectionState.DISCONNECTED) {
                     // If it was connected to a wire, schedule a network recalculation
