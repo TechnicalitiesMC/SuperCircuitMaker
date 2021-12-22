@@ -122,7 +122,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             return 0;
         }
         var data = this.data.at(level, pos, state);
-        return data.outputs[side.getOpposite().get2DDataValue()];
+        return data.outputs[side.getOpposite().get2DDataValue()] / 17;
     }
 
     @Override
