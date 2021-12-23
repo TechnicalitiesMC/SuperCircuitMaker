@@ -451,6 +451,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             var dir = Direction.fromAxisAndDirection(side.getAxis(), side.getAxisDirection());
             outputs[dir.get2DDataValue()] = value;
             getLevel().updateNeighborsAt(getBlockPos(), SCMBlocks.CIRCUIT.get());
+            getLevel().updateNeighborsAt(getBlockPos().relative(dir), SCMBlocks.CIRCUIT.get());
         }
 
         @Nullable
