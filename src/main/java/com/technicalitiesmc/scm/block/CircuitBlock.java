@@ -136,7 +136,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         var data = this.data.at(level, pos, state);
         var sides = VecDirectionFlags.none();
         for (var side : Direction.Plane.HORIZONTAL) {
-            var input = level.getSignal(pos.relative(side), side.getOpposite()) * 17;
+            var input = level.getSignal(pos.relative(side), side) * 17;
             var dir = VecDirection.fromDirection(side);
             var hIndex = dir.getHorizontalIndex();
             if (input != data.inputs[hIndex]) {
