@@ -31,7 +31,6 @@ import com.technicalitiesmc.scm.network.ComponentSyncPacket;
 import com.technicalitiesmc.scm.network.ComponentUsePacket;
 import com.technicalitiesmc.scm.network.SCMNetworkHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -218,7 +217,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         return shouldRemove && super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
     }
 
-    public InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, LocalPlayer player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         var hitPos = resolveHit(hit);
         if (hitPos == null || hitPos.pos().y() == -1) {
             return InteractionResult.PASS;
@@ -248,7 +247,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         return s.use(player, hand, sideHit, hitVec);
     }
 
-    public InteractionResult onClientClicked(BlockState state, ClientLevel level, BlockPos pos, LocalPlayer player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult onClientClicked(BlockState state, ClientLevel level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         var hitPos = resolveHit(hit);
         if (hitPos == null || hitPos.pos().y() < 0) {
             return InteractionResult.PASS;
