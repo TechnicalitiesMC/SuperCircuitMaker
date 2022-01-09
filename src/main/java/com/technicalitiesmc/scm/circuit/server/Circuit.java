@@ -255,6 +255,7 @@ public class Circuit extends SavedData {
                         var neighbor = neighbors[i][j] = getOrScoutTile(neighborPos);
                         // If there is no neighbor, we can't place the component - abort
                         if (neighbor == null) {
+                            tasks.forEach(Runnable::run);
                             return null;
                         }
                     }
@@ -268,7 +269,12 @@ public class Circuit extends SavedData {
                         // If the neighbor belongs to another circuit, absorb it
                         if (neighbor.getCircuit() != this) {
                             var offset = neighborPos.subtract(neighbor.getPosition());
-                            tasks.add(() -> absorb(neighbor.getCircuit(), offset));
+                            tasks.add(() -> {
+                                // Ensure it hasn't been re-assigned already
+                                if (neighbor.getCircuit() != this) {
+                                    absorb(neighbor.getCircuit(), offset);
+                                }
+                            });
                         }
                     }
                 }
