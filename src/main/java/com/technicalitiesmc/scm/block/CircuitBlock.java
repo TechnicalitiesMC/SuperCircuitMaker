@@ -160,18 +160,25 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     }
 
     @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return getBaseShape(state);
+    }
+
+
+    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         var data = this.data.at(level, pos, state);
+        var baseShape = getBaseShape(state);
         if (data == null) {
-            return getBaseShape(state);
+            return baseShape;
         }
         var accessor = data.getOrCreateAccessor();
         if (accessor == null) {
-            return getBaseShape(state);
+            return baseShape;
         }
 
         var shapes = new ArrayList<VoxelShape>();
-        shapes.add(getBaseShape(state));
+        shapes.add(baseShape);
         accessor.visitAreaShapes(shapes::add);
         if (accessor instanceof ClientTile ct && context instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player p &&
                 p.getItemInHand(InteractionHand.MAIN_HAND).is(SCMItemTags.SHOWS_CIRCUIT_GRID)) {
@@ -189,7 +196,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             if (px && pz && ct.hasNeighbor(Vec2i.POS_X_POS_Y)) shapes.add(GRIDS[7]);
             if (px && nz && ct.hasNeighbor(Vec2i.POS_X_NEG_Y)) shapes.add(GRIDS[8]);
         }
-        return MergedShape.of(shapes);
+        return MergedShape.of(baseShape, shapes);
     }
 
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
@@ -498,7 +505,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
                 shapes.add(CircuitHelper.createShape(CLICK_TILE_AABB, new ComponentPos(x, -1, z), ComponentSlot.DEFAULT));
             }
         }
-        return MergedShape.of(shapes);
+        return MergedShape.ofMerged(shapes);
     }
 
 }
