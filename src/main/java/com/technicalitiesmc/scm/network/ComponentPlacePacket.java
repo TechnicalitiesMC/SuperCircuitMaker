@@ -5,6 +5,7 @@ import com.technicalitiesmc.lib.circuit.placement.ComponentPlacement;
 import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.network.Packet;
 import com.technicalitiesmc.scm.block.CircuitBlock;
+import com.technicalitiesmc.scm.circuit.server.ComponentInstance;
 import com.technicalitiesmc.scm.circuit.server.ServerTileAccessor;
 import com.technicalitiesmc.scm.init.SCMSoundEvents;
 import io.netty.buffer.Unpooled;
@@ -20,7 +21,10 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ComponentPlacePacket implements Packet {
 
@@ -102,6 +106,28 @@ public class ComponentPlacePacket implements Packet {
         }
 
         @Override
+        public boolean tryPutAll(Consumer<PlacementContext.MultiPlacementContext> function) {
+            var attempts = new ArrayList<Supplier<ComponentInstance>>();
+            boolean[] failed = { false };
+            function.accept((pos, type, factory) -> {
+                if (failed[0]){
+                    return;
+                }
+                var attempt = accessor.tryPutLater(pos, type, factory);
+                if (attempt == null) {
+                    failed[0] = true;
+                } else {
+                    attempts.add(attempt);
+                }
+            });
+            if (failed[0]) {
+                return false;
+            }
+            attempts.forEach(Supplier::get);
+            return true;
+        }
+
+        @Override
         public void consumeItems(int count) {
             if (!isCreative) {
                 item.shrink(count);
@@ -111,7 +137,7 @@ public class ComponentPlacePacket implements Packet {
         @Override
         public void playSound() {
             var pitch = 0.85F + (float) (Math.random() * 0.05);
-            level.playSound(null, pos, SCMSoundEvents.COMPONENT_PLACE.get(), SoundSource.BLOCKS, 0.3f, pitch);
+            level.playSound(null, pos, SCMSoundEvents.COMPONENT_PLACE.get(), SoundSource.BLOCKS, 0.1f, pitch);
         }
 
     }

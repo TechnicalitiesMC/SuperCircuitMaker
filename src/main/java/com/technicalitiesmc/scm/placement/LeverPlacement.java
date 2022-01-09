@@ -41,13 +41,14 @@ public class LeverPlacement extends SinglePlacement<LeverPlacement.State> {
 
     @Override
     protected void put(PlacementContext.Server context, State state) {
-        context.tryPut(state.pos(), lever(), ctx -> {
+        if (context.tryPut(state.pos(), lever(), ctx -> {
             var lever = new LeverComponent(ctx);
             lever.setRotation(state.rotation());
             return lever;
-        });
-        context.consumeItems(1);
-        context.playSound();
+        })) {
+            context.consumeItems(1);
+            context.playSound();
+        }
     }
 
     public static record State(Vec3i pos, int rotation) {

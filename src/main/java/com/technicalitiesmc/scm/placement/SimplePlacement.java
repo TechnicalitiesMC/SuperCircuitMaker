@@ -41,9 +41,10 @@ public class SimplePlacement extends SinglePlacement<SimplePlacement.State> {
 
     @Override
     protected void put(PlacementContext.Server context, State state) {
-        context.tryPut(state.pos(), type.get());
-        context.consumeItems(1);
-        context.playSound();
+        if (context.tryPut(state.pos(), type.get())) {
+            context.consumeItems(1);
+            context.playSound();
+        }
     }
 
     public static record State(Vec3i pos) {

@@ -34,6 +34,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.*;
 
@@ -221,12 +222,14 @@ public class Circuit extends SavedData {
     }
 
     @Nullable
-    ComponentInstance tryPut(Vec3i pos, ComponentType type, ComponentType.Factory factory) {
+    Supplier<ComponentInstance> tryPutLater(Vec3i pos, ComponentType type, ComponentType.Factory factory) {
         var unpacked = UnpackedPos.of(pos);
         // Ensure the position isn't out of bounds
         if (unpacked.pos().y() < 0 || unpacked.pos().y() >= HEIGHT) {
             return null;
         }
+
+        var tasks = new ArrayList<Runnable>();
 
         // If there is no tile or we can't put the component there, abort
         var tile = getTile(unpacked.tile());
@@ -236,7 +239,7 @@ public class Circuit extends SavedData {
                 return null;
             }
             var offset = unpacked.tile().subtract(neighbor.getPosition());
-            absorb(neighbor.getCircuit(), offset);
+            tasks.add(() -> absorb(neighbor.getCircuit(), offset));
             tile = neighbor;
         }
 
@@ -265,22 +268,34 @@ public class Circuit extends SavedData {
                         // If the neighbor belongs to another circuit, absorb it
                         if (neighbor.getCircuit() != this) {
                             var offset = neighborPos.subtract(neighbor.getPosition());
-                            absorb(neighbor.getCircuit(), offset);
+                            tasks.add(() -> absorb(neighbor.getCircuit(), offset));
                         }
                     }
                 }
             }
         }
 
-        // Finally, put component down
-        setDirty();
-        var instance = tile.put(unpacked.pos(), factory);
-        if (instance.getType() != type) {
-            throw new IllegalStateException("Attempted to place a mismatched component type.");
-        }
-        addedComponents.add(instance);
-        sendEvent(pos, instance.getSlot(), CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.all());
-        return instance;
+        var theTile = tile;
+        return () -> {
+            // Run all enqueued tasks
+            tasks.forEach(Runnable::run);
+
+            // Finally, put component down
+            setDirty();
+            var instance = theTile.put(unpacked.pos(), factory);
+            if (instance.getType() != type) {
+                throw new IllegalStateException("Attempted to place a mismatched component type.");
+            }
+            addedComponents.add(instance);
+            sendEvent(pos, instance.getSlot(), CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.all());
+            return instance;
+        };
+    }
+
+    @Nullable
+    ComponentInstance tryPut(Vec3i pos, ComponentType type, ComponentType.Factory factory) {
+        var adder = tryPutLater(pos, type, factory);
+        return adder == null ? null : adder.get();
     }
 
     void harvest(Vec3i pos, ComponentSlot slot, ComponentHarvestContext context) {

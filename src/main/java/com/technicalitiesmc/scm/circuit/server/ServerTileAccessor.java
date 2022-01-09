@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ServerTileAccessor implements TileAccessor {
 
@@ -85,6 +86,11 @@ public class ServerTileAccessor implements TileAccessor {
     @Nullable
     public ComponentInstance get(Vec3i pos, ComponentSlot slot) {
         return tile.getCircuit().get(tile.getPosition().pack(pos), slot);
+    }
+
+    @Nullable
+    public Supplier<ComponentInstance> tryPutLater(Vec3i pos, ComponentType type, ComponentType.Factory factory) {
+        return tile.getCircuit().tryPutLater(tile.getPosition().pack(pos), type, factory);
     }
 
     @Nullable

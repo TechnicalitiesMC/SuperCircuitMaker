@@ -7,9 +7,9 @@ import com.technicalitiesmc.lib.math.Vec2i;
 import com.technicalitiesmc.scm.circuit.CircuitAdjacency;
 import com.technicalitiesmc.scm.circuit.CircuitHelper;
 import com.technicalitiesmc.scm.circuit.TileAccessor;
-import com.technicalitiesmc.scm.circuit.util.TileSection;
 import com.technicalitiesmc.scm.circuit.util.ComponentPos;
 import com.technicalitiesmc.scm.circuit.util.TilePos;
+import com.technicalitiesmc.scm.circuit.util.TileSection;
 import com.technicalitiesmc.scm.circuit.util.UnpackedPos;
 import com.technicalitiesmc.scm.client.model.CircuitModelData;
 import net.minecraft.core.Vec3i;
@@ -21,6 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.*;
@@ -98,9 +99,16 @@ public class ClientTile implements TileAccessor {
         }
         var tile = getTile(unpacked.tile());
         if (tile != null) {
-            for (var slot : type.getAllSlots()) {
-                if (tile.components[getIndex(unpacked.pos(), slot)] != null) {
-                    return false;
+            var typeSlots = new HashSet<>(Arrays.asList(type.getAllSlots()));
+            for (var slot : ComponentSlot.VALUES) {
+                var comp = tile.components[getIndex(unpacked.pos(), slot)];
+                if (comp == null) {
+                    continue;
+                }
+                for (var s : comp.getComponentType().getAllSlots()) {
+                    if (typeSlots.contains(s)) {
+                        return false;
+                    }
                 }
             }
         }
