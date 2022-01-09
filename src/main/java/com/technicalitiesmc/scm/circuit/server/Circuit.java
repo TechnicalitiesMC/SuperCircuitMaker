@@ -269,12 +269,7 @@ public class Circuit extends SavedData {
                         // If the neighbor belongs to another circuit, absorb it
                         if (neighbor.getCircuit() != this) {
                             var offset = neighborPos.subtract(neighbor.getPosition());
-                            tasks.add(() -> {
-                                // Ensure it hasn't been re-assigned already
-                                if (neighbor.getCircuit() != this) {
-                                    absorb(neighbor.getCircuit(), offset);
-                                }
-                            });
+                            tasks.add(() -> absorb(neighbor.getCircuit(), offset));
                         }
                     }
                 }
@@ -464,6 +459,9 @@ public class Circuit extends SavedData {
     // Adjacency
 
     private void absorb(Circuit other, Vec2i offset) {
+        if (other == this) {
+            return;
+        }
         other.tiles.forEach((pos, tile) -> {
             var newPos = pos.offset(offset);
             tile.move(this, newPos);
