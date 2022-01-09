@@ -90,7 +90,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     private final BlockData<Data> data = addComponent("circuit", ctx -> new BlockData<>(ctx, Data::new));
 
     public CircuitBlock() {
-        super(Properties.of(Material.STONE).strength(2.0F, 6.0F), SCMBlockEntities.CIRCUIT);
+        super(Properties.of(Material.STONE).strength(1.0F, 6.0F), SCMBlockEntities.CIRCUIT);
     }
 
     @Override
