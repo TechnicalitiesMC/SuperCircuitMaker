@@ -351,7 +351,7 @@ public class Circuit extends SavedData {
                         break;
                     }
                     currentSlot = next;
-                } while (!adjacentOnly && currentSlot != ComponentSlot.DEFAULT);
+                } while (!adjacentOnly && currentSlot != slot);
             }
         }
     }

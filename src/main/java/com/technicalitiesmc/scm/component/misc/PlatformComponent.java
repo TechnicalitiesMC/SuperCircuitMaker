@@ -1,5 +1,6 @@
 package com.technicalitiesmc.scm.component.misc;
 
+import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
@@ -10,9 +11,16 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItemTags;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 
 import java.util.function.BiFunction;
@@ -20,6 +28,8 @@ import java.util.function.BiFunction;
 public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
 
     private static final AABB BOUNDS = new AABB(0, 14 / 16D, 0, 1, 1, 1);
+
+    private static final Property<Boolean> PROP_CONDUCTIVE = BooleanProperty.create("conductive");
 
     private static final InterfaceLookup<PlatformComponent> INTERFACES = InterfaceLookup.<PlatformComponent>builder()
             // Pass through redstone I/O
@@ -47,6 +57,11 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
     }
 
     @Override
+    public ComponentState getState() {
+        return super.getState().setValue(PROP_CONDUCTIVE, conductive);
+    }
+
+    @Override
     public AABB getBoundingBox() {
         return BOUNDS;
     }
@@ -66,6 +81,20 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
                 sendEvent(event, true, side.getOpposite());
             }
         }
+    }
+
+    @Override
+    public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
+        var stack = player.getItemInHand(hand);
+        if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+            updateExternalState(true, () -> {
+                conductive = !conductive;
+            });
+            sendEvent(CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.verticals());
+            sendEvent(CircuitEvent.REDSTONE, false, VecDirectionFlags.verticals());
+            sendEvent(CircuitEvent.BUNDLED_REDSTONE, false, VecDirectionFlags.verticals());
+        }
+        return super.use(player, hand, sideHit, hit);
     }
 
     @Override
@@ -99,6 +128,10 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
         };
     }
 
+    public static void createState(StateDefinition.Builder<ComponentType, ComponentState> builder) {
+        builder.add(PROP_CONDUCTIVE);
+    }
+
     public static class Client extends ClientComponent {
 
         @Override
@@ -109,6 +142,15 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
+            var stack = player.getItemInHand(hand);
+            if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+                return InteractionResult.sidedSuccess(true);
+            }
+            return super.use(state, player, hand, sideHit, hit);
         }
 
     }

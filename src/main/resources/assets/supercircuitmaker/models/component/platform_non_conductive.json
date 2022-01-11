@@ -1,0 +1,7 @@
+{
+  "parent": "supercircuitmaker:component/_plate",
+  "textures": {
+    "top": "supercircuitmaker:component/platform_non_conductive",
+    "side": "supercircuitmaker:component/platform_non_conductive"
+  }
+}

@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "supercircuitmaker:component/platform" }
+    "conductive=false": { "model": "supercircuitmaker:component/platform_non_conductive" },
+    "conductive=true":  { "model": "supercircuitmaker:component/platform" }
   }
 }

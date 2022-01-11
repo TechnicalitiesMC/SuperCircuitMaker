@@ -164,7 +164,6 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         return getBaseShape(state);
     }
 
-
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         var data = this.data.at(level, pos, state);

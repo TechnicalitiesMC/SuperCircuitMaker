@@ -12,6 +12,7 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItemTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -298,6 +299,15 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
+            var stack = player.getItemInHand(hand);
+            if (!stack.isEmpty() && (stack.getItem() instanceof DyeItem || stack.is(SCMItemTags.ROTATES_COMPONENTS))) {
+                return InteractionResult.sidedSuccess(true);
+            }
+            return super.use(state, player, hand, sideHit, hit);
         }
 
         @Override

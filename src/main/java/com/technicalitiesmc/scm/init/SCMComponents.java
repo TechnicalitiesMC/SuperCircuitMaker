@@ -63,13 +63,13 @@ public final class SCMComponents {
     );
 
     public static final RegistryObject<ComponentType> PLATFORM = register(
-            "platform", PlatformComponent::new,
+            "platform", PlatformComponent::new, PlatformComponent::createState,
             new PlatformComponent.Client(),
             ComponentSlot.SUPPORT
     );
 
     public static final RegistryObject<ComponentType> REDSTONE_WIRE = register(
-            "redstone_wire", ColoredWireComponent::new, builder -> ColoredWireComponent.createState(builder),
+            "redstone_wire", ColoredWireComponent::new, ColoredWireComponent::createState,
             new ColoredWireComponent.Client(),
             ComponentSlot.DEFAULT
     );
