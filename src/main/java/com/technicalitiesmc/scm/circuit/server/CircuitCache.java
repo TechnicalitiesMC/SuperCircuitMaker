@@ -47,7 +47,7 @@ public class CircuitCache {
         // Evict unloaded circuits from memory
         circuits.values().removeIf(c -> {
             if (!c.isLoaded()) {
-                level.getDataStorage().set(getPath(c.getId()), null);
+                level.getDataStorage().cache.remove(getPath(c.getId()));
                 return true;
             }
             return false;
