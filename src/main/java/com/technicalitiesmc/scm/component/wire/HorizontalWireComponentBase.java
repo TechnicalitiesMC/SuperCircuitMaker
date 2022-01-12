@@ -10,6 +10,7 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMItemTags;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -59,7 +60,8 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
         var stack = player.getItemInHand(hand);
         if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
             // Calculate which side the player is interacting with
-            var side = Utils.calculatePlanarDirection(hit.x() - 0.5f, hit.z() - 0.5f);
+            var side = sideHit.getAxis() != Direction.Axis.Y ? sideHit :
+                    Utils.calculatePlanarDirection(hit.x() - 0.5f, hit.z() - 0.5f);
 
             var state = getState(side);
             var newState = state;
