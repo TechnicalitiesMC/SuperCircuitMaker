@@ -13,12 +13,14 @@ import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItemTags;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -96,6 +98,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     @Override
     public AABB getBoundingBox() {
         return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.TINY_REDSTONE.get());
     }
 
     @Override
@@ -299,6 +306,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.TINY_REDSTONE.get());
         }
 
         @Override

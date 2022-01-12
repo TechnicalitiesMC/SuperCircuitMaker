@@ -7,8 +7,11 @@ import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -54,6 +57,11 @@ public class TorchBottomComponent extends DigitalComponentBase<TorchBottomCompon
     @Override
     public AABB getBoundingBox() {
         return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(Items.REDSTONE_TORCH);
     }
 
     @Override
@@ -127,6 +135,11 @@ public class TorchBottomComponent extends DigitalComponentBase<TorchBottomCompon
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(Items.REDSTONE_TORCH);
         }
 
     }

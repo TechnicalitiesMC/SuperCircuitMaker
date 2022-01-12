@@ -15,6 +15,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -90,6 +92,11 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
     @Override
     public AABB getBoundingBox() {
         return rotation ? BOUNDS2 : BOUNDS1;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(Items.LEVER);
     }
 
     @Override
@@ -198,6 +205,11 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return state.getValue(PROP_ROTATED) ? BOUNDS2 : BOUNDS1;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(Items.LEVER);
         }
 
         @Override

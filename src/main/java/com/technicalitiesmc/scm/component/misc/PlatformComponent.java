@@ -12,11 +12,13 @@ import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItemTags;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -64,6 +66,11 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
     @Override
     public AABB getBoundingBox() {
         return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.PLATFORM.get());
     }
 
     @Override
@@ -142,6 +149,11 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.PLATFORM.get());
         }
 
         @Override

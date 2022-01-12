@@ -42,6 +42,11 @@ public class LevelIOComponent extends CircuitComponentBase<LevelIOComponent> {
     }
 
     @Override
+    public ItemStack getPickedItem() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public List<ItemStack> getDrops(ServerLevel level, boolean isCreative) {
         return Collections.emptyList();
     }

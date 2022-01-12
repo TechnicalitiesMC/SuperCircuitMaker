@@ -59,6 +59,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -148,6 +149,36 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         }
         var accessor = data.getAccessor();
         accessor.onInputsUpdated(sides);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+        var shape = getShape(state, level, pos, CollisionContext.of(player));
+        var partialTickTime = 0;
+        var start = player.getEyePosition(partialTickTime);
+        var end = player.getViewVector(partialTickTime).multiply(10, 10, 10); // If we're here, we can definitely reach it
+        var hit = shape.clip(start, start.add(end), pos);
+        if (hit != null) {
+            var hitPos = resolveHit(hit);
+            if (hitPos != null && hitPos.pos().y() != -1) {
+                var data = this.data.at(level, pos, state);
+                if (data != null) {
+                    var accessor = data.getOrCreateAccessor();
+                    if (accessor instanceof ServerTileAccessor sta) {
+                        var component = sta.get(hitPos.toAbsolute().pos(), hitPos.slot());
+                        if (component != null) {
+                            return component.getPickedItem();
+                        }
+                    } else if (accessor instanceof ClientTile ct) {
+                        var componentState = ct.getState(hitPos.toAbsolute().pos(), hitPos.slot());
+                        if (componentState != null) {
+                            return componentState.getPickedItem();
+                        }
+                    }
+                }
+            }
+        }
+        return new ItemStack(this);
     }
 
     private VoxelShape getBaseShape(BlockState state) {

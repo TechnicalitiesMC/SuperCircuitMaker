@@ -10,7 +10,9 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.AABB;
 
@@ -76,6 +78,11 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
     @Override
     public AABB getBoundingBox() {
         return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.REDSTONE_STICK.get());
     }
 
     @Override
@@ -233,6 +240,11 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.REDSTONE_STICK.get());
         }
 
     }

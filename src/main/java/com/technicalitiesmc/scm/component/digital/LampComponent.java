@@ -4,7 +4,9 @@ import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -49,6 +51,11 @@ public class LampComponent extends DigitalComponentBase<LampComponent> {
     }
 
     @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.LAMP.get());
+    }
+
+    @Override
     protected void onNewInputs(boolean tick, byte newInputs) {
         // If we're toggling, schedule an update
         var newState = newInputs != 0;
@@ -85,6 +92,11 @@ public class LampComponent extends DigitalComponentBase<LampComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.LAMP.get());
         }
 
     }

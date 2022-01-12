@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -124,6 +125,10 @@ public class ComponentInstance {
     public int getStrongOutput(VecDirection side) {
         var source = component.getInterface(side, RedstoneSource.class);
         return source != null ? source.getStrongOutput() : 0;
+    }
+
+    public ItemStack getPickedItem() {
+        return component.getPickedItem();
     }
 
     public CompoundTag save(CompoundTag tag) {

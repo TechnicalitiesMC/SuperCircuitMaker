@@ -9,6 +9,7 @@ import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
 import com.technicalitiesmc.scm.component.misc.PlatformComponent;
 import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
 import com.technicalitiesmc.scm.component.wire.VerticalWireComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -81,7 +82,7 @@ public final class SCMComponents {
 
     public static final RegistryObject<ComponentType> LEVEL_IO = register(
             "level_io", LevelIOComponent::new,
-            ClientComponent.DEFAULT,
+            ClientComponent.base(() -> ItemStack.EMPTY),
             ComponentSlot.DEFAULT
     );
 

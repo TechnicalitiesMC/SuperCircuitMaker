@@ -8,6 +8,8 @@ import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import net.minecraft.core.Vec3i;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.AABB;
 
@@ -35,6 +37,11 @@ public class TorchTopComponent extends CircuitComponentBase<TorchTopComponent> {
         return BOUNDS;
     }
 
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(Items.REDSTONE_TORCH);
+    }
+
     private RedstoneSource getRedstoneSource(VecDirection direction) {
         var below = getNeighbor(VecDirection.NEG_Y, ComponentSlot.DEFAULT);
         if (below instanceof TorchBottomComponent bottom) {
@@ -59,6 +66,11 @@ public class TorchTopComponent extends CircuitComponentBase<TorchTopComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(Items.REDSTONE_TORCH);
         }
 
     }

@@ -6,7 +6,9 @@ import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -54,6 +56,11 @@ public class RandomizerComponent extends DigitalComponentBase<RandomizerComponen
     @Override
     public AABB getBoundingBox() {
         return BOUNDS;
+    }
+
+    @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.RANDOMIZER.get());
     }
 
     @Override
@@ -121,6 +128,11 @@ public class RandomizerComponent extends DigitalComponentBase<RandomizerComponen
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.RANDOMIZER.get());
         }
 
     }

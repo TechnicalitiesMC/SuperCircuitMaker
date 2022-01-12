@@ -10,6 +10,7 @@ import com.technicalitiesmc.lib.util.value.Reference;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import com.technicalitiesmc.scm.menu.DelayMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -17,6 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -91,6 +93,11 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
     }
 
     @Override
+    public ItemStack getPickedItem() {
+        return new ItemStack(SCMItems.DELAY.get());
+    }
+
+    @Override
     public void onAdded() {
         super.onAdded();
         scheduleTick(1);
@@ -161,6 +168,11 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
         @Override
         public AABB getBoundingBox(ComponentState state) {
             return BOUNDS;
+        }
+
+        @Override
+        public ItemStack getPickedItem(ComponentState state) {
+            return new ItemStack(SCMItems.DELAY.get());
         }
 
         @Override
