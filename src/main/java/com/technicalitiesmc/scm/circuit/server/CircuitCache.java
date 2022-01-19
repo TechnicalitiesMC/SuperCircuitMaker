@@ -45,9 +45,15 @@ public class CircuitCache {
 
     private void tick() {
         // Evict unloaded circuits from memory
+        var saved = new boolean[]{ false };
         circuits.values().removeIf(c -> {
             if (!c.isLoaded()) {
-                level.getDataStorage().cache.remove(getPath(c.getId()));
+                var storage = level.getDataStorage();
+                if (!saved[0]) {
+                    saved[0] = true;
+                    storage.save();
+                }
+                storage.cache.remove(getPath(c.getId()));
                 return true;
             }
             return false;
