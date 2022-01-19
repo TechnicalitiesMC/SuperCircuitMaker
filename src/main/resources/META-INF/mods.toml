@@ -12,14 +12,20 @@ Tiny Circuits Galore!
 '''
 
 [[dependencies.supercircuitmaker]]
-    modId="forge"
-    mandatory=true
-    versionRange="[37,)"
-    ordering="NONE"
-    side="BOTH"
+modId="forge"
+mandatory=true
+versionRange="[37,)"
+ordering="NONE"
+side="BOTH"
 [[dependencies.supercircuitmaker]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.18.1,1.19)"
-    ordering="NONE"
-    side="BOTH"
+modId="minecraft"
+mandatory=true
+versionRange="[1.18.1,1.19)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.supercircuitmaker]]
+modId="tklib"
+mandatory=true
+versionRange="[0.0.2,1.0.0)"
+ordering="NONE"
+side="BOTH"
