@@ -8,6 +8,8 @@ import com.technicalitiesmc.scm.circuit.util.ComponentPos;
 import com.technicalitiesmc.scm.circuit.util.ComponentSlotPos;
 import com.technicalitiesmc.scm.circuit.util.TilePos;
 import com.technicalitiesmc.scm.circuit.util.TileSection;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -26,7 +28,9 @@ public class CircuitTile {
 
     private final ComponentInstance[] components = new ComponentInstance[TOTAL_POSITIONS];
     private final BitSet componentPositions = new BitSet(TOTAL_POSITIONS);
+    private final BitSet occupiedPositions = new BitSet(TOTAL_POSITIONS);
     private final BitSet syncQueue = new BitSet(TOTAL_POSITIONS);
+    private final Int2IntMap delegationMap = new Int2IntOpenHashMap();
     private boolean adjacentX, adjacentZ, adjacentCorner;
     private boolean mustCalcX, mustCalcZ, mustCalcCorner;
 
@@ -72,12 +76,17 @@ public class CircuitTile {
     }
 
     public boolean has(ComponentPos pos, ComponentSlot slot) {
-        return componentPositions.get(getIndex(pos, slot));
+        return occupiedPositions.get(getIndex(pos, slot));
     }
 
     @Nullable
     public ComponentInstance get(ComponentPos pos, ComponentSlot slot) {
-        return components[getIndex(pos, slot)];
+        var index = getIndex(pos, slot);
+        var instance = components[index];
+        if (instance != null){
+            return instance;
+        }
+        return occupiedPositions.get(index) ? components[delegationMap.get(index)] : null;
     }
 
     public boolean canPut(ComponentPos pos, ComponentType type) {
@@ -94,6 +103,13 @@ public class CircuitTile {
         var index = getIndex(pos, info.getSlot());
         components[index] = info;
         componentPositions.set(index);
+        for (var slot : info.getAllSlots()) {
+            var slotIndex = getIndex(pos, slot);
+            occupiedPositions.set(slotIndex);
+            if (slotIndex != index) {
+                delegationMap.put(slotIndex, index);
+            }
+        }
         syncQueue.set(index);
         circuit.enqueueTileSync(this);
         adjacentX |= pos.isOnXEdge();
@@ -103,14 +119,19 @@ public class CircuitTile {
     }
 
     public boolean remove(ComponentPos pos, ComponentSlot slot) {
-        var index = getIndex(pos, slot);
-        var c = components[index];
+        var c = get(pos, slot);
         if (c == null) {
             return false;
         }
+        var index = getIndex(pos, c.getSlot());
         c.beforeRemove();
         components[index] = null;
         componentPositions.clear(index);
+        for (var s : c.getAllSlots()) {
+            var slotIndex = getIndex(pos, s);
+            occupiedPositions.clear(slotIndex);
+            delegationMap.remove(slotIndex);
+        }
         syncQueue.set(index);
         circuit.enqueueTileSync(this);
         mustCalcX |= pos.isOnXEdge();
@@ -133,6 +154,8 @@ public class CircuitTile {
             components[i] = null;
         });
         componentPositions.andNot(section.getBits());
+        occupiedPositions.andNot(section.getBits());
+        section.getBits().stream().forEach(delegationMap::remove);
         syncQueue.or(cleared);
         circuit.enqueueTileSync(this);
         switch (section) {
@@ -256,12 +279,19 @@ public class CircuitTile {
         var indices = tag.getIntArray("indices");
         var components = tag.getList("components", Tag.TAG_COMPOUND);
         for (int i = 0; i < components.size(); i++) {
-            var idx = indices[i];
-            var cPos = getPositionFromIndex(idx);
+            var index = indices[i];
+            var cPos = getPositionFromIndex(index);
             var component = ComponentInstance.load(tile, cPos.pos(), components.getCompound(i));
             if (component != null) {
-                tile.components[idx] = component;
-                tile.componentPositions.set(idx);
+                tile.components[index] = component;
+                tile.componentPositions.set(index);
+                for (var slot : component.getAllSlots()) {
+                    var slotIndex = getIndex(cPos.pos(), slot);
+                    tile.occupiedPositions.set(slotIndex);
+                    if (slotIndex != index) {
+                        tile.delegationMap.put(slotIndex, index);
+                    }
+                }
             }
         }
 
