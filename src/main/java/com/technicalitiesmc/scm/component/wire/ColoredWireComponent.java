@@ -110,7 +110,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         // Update the inputs that received changes
         for (var side : events.findAny(CircuitEvent.REDSTONE, CircuitEvent.NEIGHBOR_CHANGED)) {
             var isInput = getState(side) == WireConnectionState.INPUT;
-            sideInputs[side.ordinal()] = isInput ? getWeakInput(side, true) : 0;
+            sideInputs[side.ordinal()] = isInput ? getWeakInput(side) : 0;
         }
         for (var side : disconnected) {
             sideInputs[side.ordinal()] = 0;
@@ -213,13 +213,13 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         for (var side : VecDirection.VALUES) {
             switch (getState(side)) {
                 case WIRE -> {
-                    var neighbor = findNeighborInterface(side, RedstoneWire.class, true);
+                    var neighbor = findNeighborInterface(side, RedstoneWire.class);
                     if (neighbor != null) {
                         visitor.accept(neighbor);
                     }
                 }
                 case BUNDLED_WIRE -> {
-                    var neighbor = findNeighborInterface(side, BundledWire.class, true);
+                    var neighbor = findNeighborInterface(side, BundledWire.class);
                     if (neighbor != null) {
                         visitor.accept(neighbor.get(color));
                     }

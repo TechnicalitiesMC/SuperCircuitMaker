@@ -90,7 +90,7 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
         // Update the inputs that received changes
         for (var side : events.findAny(CircuitEvent.REDSTONE, CircuitEvent.NEIGHBOR_CHANGED)) {
             var isInput = getState(side) == WireConnectionState.INPUT;
-            sideInputs[side.getAxisDirection().ordinal()] = isInput ? getWeakInput(side, true) : 0;
+            sideInputs[side.getAxisDirection().ordinal()] = isInput ? getWeakInput(side) : 0;
         }
         for (var side : disconnected) {
             sideInputs[side.getAxisDirection().ordinal()] = 0;

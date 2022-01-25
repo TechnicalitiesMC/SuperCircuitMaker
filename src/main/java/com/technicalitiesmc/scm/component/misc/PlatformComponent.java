@@ -35,11 +35,11 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
 
     private static final InterfaceLookup<PlatformComponent> INTERFACES = InterfaceLookup.<PlatformComponent>builder()
             // Pass through redstone I/O
-            .with(RedstoneSource.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSource.class, false))
-            .with(RedstoneSink.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSink.class, false))
+            .with(RedstoneSource.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSource.class))
+            .with(RedstoneSink.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSink.class))
             // As well as regular and bundled wires
-            .with(RedstoneWire.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneWire.class, true))
-            .with(BundledWire.class, VecDirectionFlags.verticals(), makePassThrough(BundledWire.class, true))
+            .with(RedstoneWire.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneWire.class))
+            .with(BundledWire.class, VecDirectionFlags.verticals(), makePassThrough(BundledWire.class))
             .build();
 
     private boolean conductive = true;
@@ -82,7 +82,7 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
     public void receiveEvent(VecDirection side, CircuitEvent event, ComponentEventMap.Builder builder) {
         // Forward events vertically
         if (conductive && side.getAxis() == Direction.Axis.Y) {
-            var neighbor = getOppositeNeighbor(side, false);
+            var neighbor = getOppositeNeighbor(side);
             // Skip forwarding the event if there is no direct neighbor
             if (neighbor != null) {
                 sendEvent(event, true, side.getOpposite());
@@ -117,20 +117,20 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
 
     // Helpers
 
-    private CircuitComponent getOppositeNeighbor(VecDirection side, boolean adjacentOnly) {
-        if (side.isPositive()) {
-            return findNeighbor(VecDirection.NEG_Y, adjacentOnly);
-        } else {
-            return getNeighbor(VecDirection.POS_Y, ComponentSlot.DEFAULT);
+    private CircuitComponent getOppositeNeighbor(VecDirection side) {
+        var neighbor = findNeighbor(side.getOpposite());
+        if (neighbor != null) {
+            return neighbor;
         }
+        return !side.isPositive() ? getNeighbor(side.getOpposite(), ComponentSlot.SUPPORT) : null;
     }
 
-    private static <T> BiFunction<PlatformComponent, VecDirection, T> makePassThrough(Class<T> type, boolean adjacentOnly) {
+    private static <T> BiFunction<PlatformComponent, VecDirection, T> makePassThrough(Class<T> type) {
         return (comp, side) -> {
             if (!comp.conductive) {
                 return null;
             }
-            var neighbor = comp.getOppositeNeighbor(side, adjacentOnly);
+            var neighbor = comp.getOppositeNeighbor(side);
             return neighbor == null ? null : neighbor.getInterface(side, type);
         };
     }

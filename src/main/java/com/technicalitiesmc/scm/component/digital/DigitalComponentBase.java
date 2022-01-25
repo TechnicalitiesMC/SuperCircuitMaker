@@ -103,7 +103,7 @@ public abstract class DigitalComponentBase<T extends DigitalComponentBase<T>> ex
 
     private byte computeInputs(byte inputs, VecDirectionFlags sides) {
         for (var direction : sides) {
-            var newInput = getStrongInput(direction, false) > 0;
+            var newInput = getStrongInput(direction) > 0;
             inputs = Utils.set(inputs, direction.ordinal(), newInput);
         }
         return inputs;

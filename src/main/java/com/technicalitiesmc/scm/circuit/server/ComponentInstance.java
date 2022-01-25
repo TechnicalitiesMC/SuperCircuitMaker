@@ -57,6 +57,10 @@ public class ComponentInstance {
         return component.getType().getSlot();
     }
 
+    public ComponentSlot[] getAllSlots() {
+        return component.getType().getAllSlots();
+    }
+
     public ComponentState getState() {
         return state;
     }

@@ -57,7 +57,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
 
     @Nullable
     protected CircuitComponent getConnectionTarget(VecDirection side) {
-        return findNeighbor(side, true);
+        return findNeighbor(side);
     }
 
     protected WireConnectionState[] getConnectionPriorities() {
