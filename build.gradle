@@ -14,7 +14,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${_mcversion}_${_version}"
+version = "${_version}+${_mcversion}"
 group = 'com.technicalitiesmc'
 archivesBaseName = 'SuperCircuitMaker2'
 
@@ -100,7 +100,7 @@ jar {
         'Specification-Vendor'    : 'amadornes',
         'Specification-Version'   : '1',
         'Implementation-Title'    : project.name,
-        'Implementation-Version'  : project.jar.archiveVersion,
+        'Implementation-Version'  : _version,
         'Implementation-Vendor'   : 'amadornes',
         'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         'MixinConfigs'            : 'supercircuitmaker.mixin.json'
