@@ -213,13 +213,13 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         for (var side : VecDirection.VALUES) {
             switch (getState(side)) {
                 case WIRE -> {
-                    var neighbor = getNeighborInterface(side, RedstoneWire.class, true);
+                    var neighbor = findNeighborInterface(side, RedstoneWire.class, true);
                     if (neighbor != null) {
                         visitor.accept(neighbor);
                     }
                 }
                 case BUNDLED_WIRE -> {
-                    var neighbor = getNeighborInterface(side, BundledWire.class, true);
+                    var neighbor = findNeighborInterface(side, BundledWire.class, true);
                     if (neighbor != null) {
                         visitor.accept(neighbor.get(color));
                     }

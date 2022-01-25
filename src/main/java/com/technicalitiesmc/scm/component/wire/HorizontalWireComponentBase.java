@@ -65,7 +65,7 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
 
             var state = getState(side);
             var newState = state;
-            var neighbor = getNeighbor(side, true);
+            var neighbor = findNeighbor(side, true);
 
             // If there is no neighbor
             if (neighbor == null) {

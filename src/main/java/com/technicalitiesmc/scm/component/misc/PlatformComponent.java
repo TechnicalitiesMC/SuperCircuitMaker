@@ -119,7 +119,7 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
 
     private CircuitComponent getOppositeNeighbor(VecDirection side, boolean adjacentOnly) {
         if (side.isPositive()) {
-            return getNeighbor(VecDirection.NEG_Y, adjacentOnly);
+            return findNeighbor(VecDirection.NEG_Y, adjacentOnly);
         } else {
             return getNeighbor(VecDirection.POS_Y, ComponentSlot.DEFAULT);
         }

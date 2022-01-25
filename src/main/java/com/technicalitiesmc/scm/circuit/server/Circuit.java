@@ -288,7 +288,7 @@ public class Circuit extends SavedData {
                 throw new IllegalStateException("Attempted to place a mismatched component type.");
             }
             addedComponents.add(instance);
-            sendEvent(pos, instance.getSlot(), CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.all());
+            sendEvent(pos, instance.getSlot(), CircuitEvent.NEIGHBOR_CHANGED, VecDirectionFlags.all());
             return instance;
         };
     }
@@ -334,24 +334,27 @@ public class Circuit extends SavedData {
         return InteractionResult.PASS;
     }
 
-    void sendEvent(Vec3i pos, ComponentSlot slot, CircuitEvent event, boolean adjacentOnly, VecDirectionFlags directions) {
+    void sendEvent(Vec3i pos, ComponentSlot slot, CircuitEvent event, VecDirectionFlags directions) {
         for (var direction : directions) {
             if (direction.getAxis() != Direction.Axis.Y) {
                 enqueueEventAt(pos.offset(direction.getOffset()), slot, direction.getOpposite(), event);
             } else {
+                // Visit every component along the way within this position, as well as every component in the next position over
                 var dir = direction.getAxisDirection();
                 var currentSlot = slot;
                 var offset = Vec3i.ZERO;
                 do {
                     offset = offset.offset(currentSlot.getOffsetTowards(dir));
+                    if (offset.distSqr(Vec3i.ZERO) > 1){
+                        break;
+                    }
                     var next = currentSlot.next(dir);
                     var component = get(pos.offset(offset), next);
                     if (component != null) {
                         enqueueEventAt(pos.offset(offset), next, direction.getOpposite(), event);
-                        break;
                     }
                     currentSlot = next;
-                } while (!adjacentOnly && currentSlot != slot);
+                } while (true);
             }
         }
     }

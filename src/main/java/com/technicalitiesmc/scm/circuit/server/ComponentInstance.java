@@ -186,7 +186,7 @@ public class ComponentInstance {
             var pos = absolutePos.offset(offset);
             var circuit = getCircuit();
             if (circuit.tryRemove(pos, slot) && notify) {
-                circuit.sendEvent(pos, slot, CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.all());
+                circuit.sendEvent(pos, slot, CircuitEvent.NEIGHBOR_CHANGED, VecDirectionFlags.all());
             }
         }
 
@@ -196,9 +196,9 @@ public class ComponentInstance {
         }
 
         @Override
-        public void sendEventAt(Vec3i offset, ComponentSlot slot, CircuitEvent event, boolean adjacentOnly, VecDirectionFlags directions) {
+        public void sendEventAt(Vec3i offset, ComponentSlot slot, CircuitEvent event, VecDirectionFlags directions) {
             var pos = absolutePos.offset(offset);
-            getCircuit().sendEvent(pos, slot, event, adjacentOnly, directions);
+            getCircuit().sendEvent(pos, slot, event, directions);
         }
 
         @Override
