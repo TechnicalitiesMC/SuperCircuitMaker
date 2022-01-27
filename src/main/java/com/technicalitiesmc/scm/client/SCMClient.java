@@ -181,7 +181,9 @@ public class SCMClient {
             return;
         }
 
-        busyTimer--;
+        if (busyTimer > 0) {
+            busyTimer--;
+        }
 
         if (!clicked && wasClicked) {
             var minecraft = Minecraft.getInstance();
