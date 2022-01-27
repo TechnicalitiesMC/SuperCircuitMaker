@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:block/inspector",
+  "textures": {
+    "bottom": "minecraft:block/observer_back_on"
+  }
+}

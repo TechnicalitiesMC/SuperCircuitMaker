@@ -2,6 +2,7 @@
   "itemGroup.supercircuitmaker": "Super Circuit Maker",
 
   "block.supercircuitmaker.circuit": "Circuit",
+  "block.supercircuitmaker.inspector": "Inspector",
   "item.supercircuitmaker.screwdriver": "Screwdriver",
   "item.supercircuitmaker.tiny_redstone": "Tiny Pile of Redstone Dust",
   "item.supercircuitmaker.randomizer": "Glowstone Exciter",
@@ -23,5 +24,9 @@
   "container.supercircuitmaker.timing.inc_1t": "+1t",
   "container.supercircuitmaker.timing.inc_10t": "+10t",
 
-  "subtitles.supercircuitmaker.place": "BOOP"
+  "subtitles.supercircuitmaker.place": "BOOP",
+
+  "msg.supercircuitmaker.inspector.learned": "Learned!",
+  "msg.supercircuitmaker.inspector.mode_state": "Selected mode: Match block state",
+  "msg.supercircuitmaker.inspector.mode_block": "Selected mode: Match block type"
 }

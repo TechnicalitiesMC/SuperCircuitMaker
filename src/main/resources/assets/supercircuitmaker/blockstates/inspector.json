@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,powered=false": {
+      "model": "supercircuitmaker:block/inspector",
+      "x": 90
+    },
+    "facing=down,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on",
+      "x": 90
+    },
+    "facing=east,powered=false": {
+      "model": "supercircuitmaker:block/inspector",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on",
+      "y": 90
+    },
+    "facing=north,powered=false": {
+      "model": "supercircuitmaker:block/inspector"
+    },
+    "facing=north,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on"
+    },
+    "facing=south,powered=false": {
+      "model": "supercircuitmaker:block/inspector",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on",
+      "y": 180
+    },
+    "facing=up,powered=false": {
+      "model": "supercircuitmaker:block/inspector",
+      "x": 270
+    },
+    "facing=up,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on",
+      "x": 270
+    },
+    "facing=west,powered=false": {
+      "model": "supercircuitmaker:block/inspector",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "supercircuitmaker:block/inspector_on",
+      "y": 270
+    }
+  }
+}

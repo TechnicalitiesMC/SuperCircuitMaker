@@ -2,6 +2,7 @@ package com.technicalitiesmc.scm.init;
 
 import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.block.CircuitBlock;
+import com.technicalitiesmc.scm.block.InspectorBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,6 +17,8 @@ public final class SCMBlocks {
     public static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, SuperCircuitMaker.MODID);
 
     public static final RegistryObject<Block> CIRCUIT = register("circuit", CircuitBlock::new);
+
+    public static final RegistryObject<Block> INSPECTOR = register("inspector", InspectorBlock::new);
 
     // Helpers
     private static <T extends Block> RegistryObject<T> register(String name, Supplier<T> factory) {

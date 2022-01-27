@@ -21,6 +21,8 @@ public final class SCMItems {
 
     public static final RegistryObject<BlockItem> CIRCUIT = register(SCMBlocks.CIRCUIT);
 
+    public static final RegistryObject<BlockItem> INSPECTOR = register(SCMBlocks.INSPECTOR);
+
     public static final RegistryObject<Item> TINY_REDSTONE = register("tiny_redstone", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.REDSTONE_WIRE, false, true));
     });

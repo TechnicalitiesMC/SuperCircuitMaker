@@ -15,6 +15,8 @@ public final class SCMBlockEntities {
 
     public static final RegistryObject<BlockEntityType<TKBlockEntity>> CIRCUIT = register(SCMBlocks.CIRCUIT);
 
+    public static final RegistryObject<BlockEntityType<TKBlockEntity>> INSPECTOR = register(SCMBlocks.INSPECTOR);
+
     // Helpers
     private static RegistryObject<BlockEntityType<TKBlockEntity>> register(RegistryObject<Block> block) {
         return register(TKBlockEntity::new, block);

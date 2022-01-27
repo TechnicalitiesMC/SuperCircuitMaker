@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/observer",
+  "textures": {
+    "front": "supercircuitmaker:block/inspector_front",
+    "particle": "supercircuitmaker:block/inspector_front"
+  }
+}
