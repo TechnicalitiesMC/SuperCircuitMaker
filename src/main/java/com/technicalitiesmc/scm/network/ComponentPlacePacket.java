@@ -23,7 +23,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ComponentPlacePacket implements Packet {
@@ -106,21 +106,18 @@ public class ComponentPlacePacket implements Packet {
         }
 
         @Override
-        public boolean tryPutAll(Consumer<PlacementContext.MultiPlacementContext> function) {
+        public boolean tryPutAll(Predicate<PlacementContext.MultiPlacementContext> function) {
             var attempts = new ArrayList<Supplier<ComponentInstance>>();
-            boolean[] failed = { false };
-            function.accept((pos, type, factory) -> {
-                if (failed[0]){
-                    return;
-                }
+            var success = function.test((pos, type, factory) -> {
                 var attempt = accessor.tryPutLater(pos, type, factory);
                 if (attempt == null) {
-                    failed[0] = true;
+                    return false;
                 } else {
                     attempts.add(attempt);
+                    return true;
                 }
             });
-            if (failed[0]) {
+            if (!success || attempts.isEmpty()) {
                 return false;
             }
             attempts.forEach(Supplier::get);

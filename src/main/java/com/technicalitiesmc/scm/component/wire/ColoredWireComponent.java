@@ -35,10 +35,10 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 2 / 16f, 1);
 
-    private static final Property<WireVisualConnectionState> PROP_NEG_X = EnumProperty.create("neg_x", WireVisualConnectionState.class);
-    private static final Property<WireVisualConnectionState> PROP_POS_X = EnumProperty.create("pos_x", WireVisualConnectionState.class);
-    private static final Property<WireVisualConnectionState> PROP_NEG_Z = EnumProperty.create("neg_z", WireVisualConnectionState.class);
-    private static final Property<WireVisualConnectionState> PROP_POS_Z = EnumProperty.create("pos_z", WireVisualConnectionState.class);
+    public static final Property<WireVisualConnectionState> PROP_NEG_X = EnumProperty.create("neg_x", WireVisualConnectionState.class);
+    public static final Property<WireVisualConnectionState> PROP_POS_X = EnumProperty.create("pos_x", WireVisualConnectionState.class);
+    public static final Property<WireVisualConnectionState> PROP_NEG_Z = EnumProperty.create("neg_z", WireVisualConnectionState.class);
+    public static final Property<WireVisualConnectionState> PROP_POS_Z = EnumProperty.create("pos_z", WireVisualConnectionState.class);
     private static final Property<DyeColor> PROP_EXT_COLOR = EnumProperty.create("color", DyeColor.class);
     private static final Property<Integer> PROP_EXT_POWER = IntegerProperty.create("power", 0, 255);
 
@@ -75,6 +75,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         this.mustPropagate = mustPropagate;
         this.color = color;
         this.power = power;
+    }
+
+    public ColoredWireComponent(ComponentContext context, Map<VecDirection, WireConnectionState> connectionStates) {
+        this(context);
+        this.getConnectionStates().putAll(connectionStates);
     }
 
     @Override

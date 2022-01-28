@@ -45,8 +45,8 @@ public class TorchPlacement extends SinglePlacement<SimplePlacement.State> {
     @Override
     protected void put(PlacementContext.Server context, SimplePlacement.State state) {
         if (context.tryPutAll(ctx -> {
-            ctx.at(state.pos(), bottom());
-            ctx.at(state.pos().above(), top());
+            return ctx.at(state.pos(), bottom()) &&
+                ctx.at(state.pos().above(), top());
         })) {
             context.consumeItems(1);
             context.playSound();

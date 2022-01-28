@@ -13,6 +13,7 @@ import com.technicalitiesmc.scm.init.SCMBlocks;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMMenus;
 import com.technicalitiesmc.scm.placement.ComponentPlacementHandler;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -22,6 +23,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -32,9 +34,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -52,13 +52,16 @@ public class SCMClient {
     private static final Map<ComponentState, BakedModel> MODELS = new IdentityHashMap<>();
 
     private static int busyTimer = 0;
-    private static boolean clicked = false, wasClicked = false;
+    private static boolean partial = false;
+    private static KeyMapping partialMapping;
+    private static InteractionHand partialHand;
 
     @SubscribeEvent
     public static void setup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MinecraftForge.EVENT_BUS.addListener(SCMClient::onClickInput);
             MinecraftForge.EVENT_BUS.addListener(SCMClient::onClientTick);
+            MinecraftForge.EVENT_BUS.addListener(SCMClient::onDrawBlockHighlight);
             registerScreens();
         });
     }
@@ -154,9 +157,18 @@ public class SCMClient {
 
         InteractionResult result;
         if (event.isUseItem()) {
-            result = minecraft.player.isCrouching() ? InteractionResult.PASS : block.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
+            if (partial) {
+                result = InteractionResult.CONSUME_PARTIAL;
+            } else {
+                result = minecraft.player.isCrouching() ? InteractionResult.PASS : block.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
+            }
             if (result == InteractionResult.PASS) {
                 result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
+            }
+            if (result == InteractionResult.CONSUME_PARTIAL) {
+                partial = true;
+                partialMapping = event.getKeyMapping();
+                partialHand = event.getHand();
             }
         } else if (event.isAttack()) {
             result = block.onClientClicked(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
@@ -165,9 +177,6 @@ public class SCMClient {
         }
         if (result == InteractionResult.PASS) {
             return;
-        }
-        if (result.consumesAction()) {
-            clicked = true;
         }
         event.setCanceled(result.consumesAction());
         event.setSwingHand(result.shouldSwing());
@@ -185,14 +194,45 @@ public class SCMClient {
             busyTimer--;
         }
 
-        if (!clicked && wasClicked) {
-            var minecraft = Minecraft.getInstance();
+        if (!partial) {
+            return;
+        }
+        var minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || minecraft.player == null || !(minecraft.hitResult instanceof BlockHitResult hit)) {
+            return;
+        }
+        var state = Utils.resolveHit(minecraft.level, hit);
+        if (!(state.getBlock() instanceof CircuitBlock)) {
+            return;
+        }
+
+        if (partialMapping.isDown()) {
+            var result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, partialHand, hit);
+            if (result != InteractionResult.CONSUME_PARTIAL) {
+                partial = false;
+                busyTimer = 5;
+            }
+        } else {
             if (ComponentPlacementHandler.onClientStopUsing(minecraft.level, minecraft.player) || busyTimer > 0) {
-                busyTimer = 2; // TODO: re-visit because ordering of this event and the click event is wrong
+                partial = false;
+                busyTimer = 2;
             }
         }
-        wasClicked = clicked;
-        clicked = false;
+    }
+
+    public static void onDrawBlockHighlight(DrawSelectionEvent.HighlightBlock event) {
+        var minecraft = Minecraft.getInstance();
+        if (!(minecraft.hitResult instanceof BlockHitResult hit)) {
+            return;
+        }
+        var state = Utils.resolveHit(minecraft.level, hit);
+        if (!(state.getBlock() instanceof CircuitBlock)) {
+            return;
+        }
+
+        if (ComponentPlacementHandler.onDrawBlockHighlight(minecraft.level, minecraft.player, event.getMultiBufferSource(), event.getPoseStack(), event.getPartialTicks())) {
+            event.setCanceled(true);
+        }
     }
 
     public static BlockState getBlockState(ComponentState state) {

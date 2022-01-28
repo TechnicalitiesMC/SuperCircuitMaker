@@ -1,5 +1,6 @@
 package com.technicalitiesmc.scm.placement;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.technicalitiesmc.lib.circuit.component.ComponentSlot;
 import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
@@ -8,10 +9,15 @@ import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.scm.block.CircuitBlock;
 import com.technicalitiesmc.scm.circuit.client.ClientTile;
+import com.technicalitiesmc.scm.client.model.CircuitModel;
 import com.technicalitiesmc.scm.network.ComponentPlacePacket;
 import com.technicalitiesmc.scm.network.SCMNetworkHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.InteractionHand;
@@ -19,19 +25,25 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 
 import javax.annotation.Nullable;
 
+import java.util.Random;
+
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.HEIGHT;
 
 public class ComponentPlacementHandler {
 
-    private static final Capability<CircuitBlock.Data> DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    private static final Capability<ComponentPlacement> COMPONENT_PLACEMENT_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    private static final Capability<PlayerPlacementData> PLAYER_PLACEMENT_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+    private static final Capability<CircuitBlock.Data> DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
+    private static final Capability<ComponentPlacement> COMPONENT_PLACEMENT_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
+    private static final Capability<PlayerPlacementData> PLAYER_PLACEMENT_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
     public static InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, LocalPlayer player, InteractionHand hand, BlockHitResult hit) {
         var hitPos = CircuitBlock.resolveHit(hit);
@@ -108,6 +120,38 @@ public class ComponentPlacementHandler {
         return true;
     }
 
+    public static boolean onDrawBlockHighlight(ClientLevel level, LocalPlayer player, MultiBufferSource buffers, PoseStack poseStack, float partialTicks) {
+        var data = player.getCapability(PLAYER_PLACEMENT_DATA_CAPABILITY).orElse(null);
+        if (!data.isPlacing()) {
+            return false;
+        }
+
+        var placement = data.getPlacement();
+        var previewStates = placement.getPreviewStates();
+        if (previewStates.isEmpty()) {
+            return false;
+        }
+
+        var mc = Minecraft.getInstance();
+        var cameraPos = mc.gameRenderer.getMainCamera().getPosition();
+        var offset = Vec3.atLowerCornerOf(data.getPos()).subtract(cameraPos);
+
+        poseStack.pushPose();
+        poseStack.translate(offset.x(), offset.y(), offset.z());
+
+        var buffer = buffers.getBuffer(RenderType.solid());
+        CircuitModel.processComponentGeometry(previewStates, RenderType.solid(), new Random(), quad -> buffer.putBulkData(
+                poseStack.last(),
+                quad,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                0x0E00E0, 0
+        ));
+
+        poseStack.popPose();
+
+        return false;
+    }
+
     private static class SimpleClientContext implements PlacementContext.Client {
 
         private final Player player;
@@ -170,6 +214,12 @@ public class ComponentPlacementHandler {
         public boolean isWithinBounds(Vec3i pos) {
             return pos.getY() >= 0 && pos.getY() < HEIGHT;
         }
+
+        @Override
+        public boolean isModifierPressed() {
+            return Screen.hasControlDown(); // TODO: replace with keybind
+        }
+
 
     }
 

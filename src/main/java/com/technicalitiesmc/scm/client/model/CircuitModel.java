@@ -1,8 +1,10 @@
 package com.technicalitiesmc.scm.client.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
+import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.client.circuit.ComponentRenderTypes;
 import com.technicalitiesmc.scm.circuit.CircuitAdjacency;
 import com.technicalitiesmc.scm.client.SCMClient;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.QuadTransformer;
@@ -20,7 +23,10 @@ import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Consumer;
 
 public class CircuitModel implements IDynamicBakedModel {
 
@@ -86,13 +92,17 @@ public class CircuitModel implements IDynamicBakedModel {
         quads.addAll(getParentQuads(state, side, rand, extraData));
 
         var renderType = MinecraftForgeClient.getRenderType();
-        for (var pair : data.getStates()) {
-            var componentState = pair.getRight();
+        processComponentGeometry(data.getStates(), renderType, rand, quads::add);
+
+        return quads.build();
+    }
+
+    public static void processComponentGeometry(Multimap<Vec3i, ComponentState> states, RenderType renderType, Random rand, Consumer<BakedQuad> consumer) {
+        states.forEach((pos, componentState) -> {
             if (!ComponentRenderTypes.shouldRender(componentState.getComponentType(), renderType)) {
-                continue;
+                return;
             }
 
-            var pos = pair.getLeft();
             var matrix = Matrix4f.createScaleMatrix(1 / 8f, 1 / 8f, 1 / 8f);
             matrix.multiply(Matrix4f.createTranslateMatrix(pos.getX() + 0.5f, pos.getY() + 1, pos.getZ() + 0.5f));
             var transformer = new QuadTransformer(new Transformation(matrix));
@@ -100,18 +110,16 @@ public class CircuitModel implements IDynamicBakedModel {
             var rawState = componentState.getRawState();
             var blockState = SCMClient.getBlockState(rawState);
             var model = SCMClient.getModel(rawState);
-            var transformed = transformer.processMany(model.getQuads(blockState, side, rand));
+            var transformed = transformer.processMany(model.getQuads(blockState, null, rand));
             for (var quad : transformed) {
                 if (!quad.isTinted()) {
-                    quads.add(quad);
+                    consumer.accept(quad);
                     continue;
                 }
                 var tint = componentState.getTint(quad.getTintIndex());
-                quads.add(new BakedQuad(quad.getVertices(), tint, quad.getDirection(), quad.getSprite(), quad.isShade()));
+                consumer.accept(new BakedQuad(quad.getVertices(), tint, quad.getDirection(), quad.getSprite(), quad.isShade()));
             }
-        }
-
-        return quads.build();
+        });
     }
 
     @Override

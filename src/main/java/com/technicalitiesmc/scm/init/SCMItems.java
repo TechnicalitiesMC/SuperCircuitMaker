@@ -1,10 +1,15 @@
 package com.technicalitiesmc.scm.init;
 
+import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
+import com.technicalitiesmc.scm.component.wire.WireConnectionState;
+import com.technicalitiesmc.scm.component.wire.WireVisualConnectionState;
 import com.technicalitiesmc.scm.item.ScrewdriverItem;
 import com.technicalitiesmc.scm.item.SimpleComponentItem;
 import com.technicalitiesmc.scm.placement.PlatformPlacement;
 import com.technicalitiesmc.scm.placement.SimplePlacement;
+import com.technicalitiesmc.scm.placement.WirePlacement;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -12,6 +17,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,7 +30,19 @@ public final class SCMItems {
     public static final RegistryObject<BlockItem> INSPECTOR = register(SCMBlocks.INSPECTOR);
 
     public static final RegistryObject<Item> TINY_REDSTONE = register("tiny_redstone", () -> {
-        return new SimpleComponentItem(new SimplePlacement(SCMComponents.REDSTONE_WIRE, false, true));
+        return new SimpleComponentItem(new WirePlacement(SCMComponents.REDSTONE_WIRE, (context, connections) -> {
+            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
+//            for (var disabledSide : VecDirectionFlags.horizontals().except(connections)) {
+//                connectionStates.put(disabledSide, WireConnectionState.FORCE_DISCONNECTED);
+//            }
+            return new ColoredWireComponent(context, connectionStates);
+        }, connections -> {
+            return SCMComponents.REDSTONE_WIRE.get().getDefaultState()
+                    .setValue(ColoredWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED);
+        }));
     });
     public static final RegistryObject<Item> REDSTONE_STICK = register("redstone_stick", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.VERTICAL_WIRE, true, false));

@@ -1,5 +1,6 @@
 package com.technicalitiesmc.scm.circuit.client;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.technicalitiesmc.lib.circuit.component.ComponentSlot;
 import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
@@ -16,10 +17,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.function.Consumer;
@@ -157,15 +156,15 @@ public class ClientTile implements TileAccessor {
     }
 
     public CircuitModelData getModelData() {
-        var list = new ArrayList<Pair<Vec3i, ComponentState>>();
+        var builder = ImmutableMultimap.<Vec3i, ComponentState>builder();
         for (int i = 0; i < TOTAL_POSITIONS; i++) {
             var state = components[i];
             if (state != null) {
                 var pos = getPositionFromIndex(i);
-                list.add(Pair.of(pos.toAbsolute().pos(), state));
+                builder.put(pos.toAbsolute().pos(), state);
             }
         }
-        return new CircuitModelData(list, adjacency);
+        return new CircuitModelData(builder.build(), adjacency);
     }
 
     public static ClientTile fromDescription(Host host, CompoundTag tag) {
