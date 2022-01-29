@@ -28,8 +28,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
@@ -87,13 +87,17 @@ public class InspectorBlock extends TKBlock.WithEntity {
     }
 
     public BlockState updateShape(BlockState state, Direction side, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        var data = this.data.at(level, pos, state);
-        if (data != null && state.getValue(FACING) == side && !state.getValue(POWERED)) {
-            if (data.checkBlock(neighborState)) {
-                startSignal(level, pos);
-            }
+        if (state.getValue(FACING) == side) {
+            checkUpdate(level, pos, state, neighborState);
         }
         return super.updateShape(state, side, neighborState, level, pos, neighborPos);
+    }
+
+    private void checkUpdate(LevelAccessor level, BlockPos pos, BlockState state, BlockState neighborState) {
+        var data = this.data.at(level, pos, state);
+        if (data != null && !state.getValue(POWERED) && data.checkBlock(neighborState)) {
+            startSignal(level, pos);
+        }
     }
 
     private void startSignal(LevelAccessor level, BlockPos pos) {
@@ -135,6 +139,14 @@ public class InspectorBlock extends TKBlock.WithEntity {
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         var data = this.data.at(level, pos, state);
         return data != null && data.found ? 15 : 0;
+    }
+
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean moving) {
+        super.onPlace(state, level, pos, oldState, moving);
+        if (!state.is(oldState.getBlock())) {
+            checkUpdate(level, pos, state, level.getBlockState(pos.relative(state.getValue(FACING))));
+        }
     }
 
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
