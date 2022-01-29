@@ -122,7 +122,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             return 0;
         }
         var data = this.data.at(level, pos, state);
-        return data.outputs[side.getOpposite().get2DDataValue()] / 17;
+        return data != null ? data.outputs[side.getOpposite().get2DDataValue()] / 17 : 0;
     }
 
     @Override
@@ -134,6 +134,9 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos neighborPos, boolean unknown) {
         super.neighborChanged(state, level, pos, block, neighborPos, unknown);
         var data = this.data.at(level, pos, state);
+        if (data == null) {
+            return;
+        }
         var sides = VecDirectionFlags.none();
         for (var side : Direction.Plane.HORIZONTAL) {
             var input = level.getSignal(pos.relative(side), side) * 17;
@@ -232,8 +235,10 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && !level.isClientSide()) {
             var data = this.data.at(level, pos, state);
-            var accessor = data.getAccessor();
-            accessor.clearAndRemove(ComponentHarvestContext.drop((ServerLevel) level, data::drop));
+            if (data != null) {
+                var accessor = data.getAccessor();
+                accessor.clearAndRemove(ComponentHarvestContext.drop((ServerLevel) level, data::drop));
+            }
         }
         super.onRemove(state, level, pos, newState, moving);
     }
@@ -247,7 +252,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             shouldRemove = accessor == null || accessor.isAreaEmpty();
         }
         shouldRemove |= player.isCrouching();
-        if (shouldRemove && !level.isClientSide()) {
+        if (shouldRemove && !level.isClientSide() && data != null) {
             var accessor = data.getAccessor();
             accessor.clearAndRemove(ComponentHarvestContext.forPlayer(player));
         }
@@ -261,7 +266,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         }
 
         var data = this.data.at(level, pos, state);
-        if (!(data.getOrCreateAccessor() instanceof ClientTile ct)) {
+        if (data == null || !(data.getOrCreateAccessor() instanceof ClientTile ct)) {
             return InteractionResult.PASS;
         }
 
