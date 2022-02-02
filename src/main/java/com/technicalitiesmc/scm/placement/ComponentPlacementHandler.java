@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.HEIGHT;
+import static com.technicalitiesmc.scm.circuit.CircuitHelper.SIZE;
 
 public class ComponentPlacementHandler {
 
@@ -78,7 +79,7 @@ public class ComponentPlacementHandler {
             data.set(placement, context, pos, hand);
         }
 
-        if (placement.tick(context, hitPos.toAbsolute().pos(), VecDirection.fromDirection(hit.getDirection()))) {
+        if (placement.tick(context, hitPos.toAbsolute().pos().offset(pos.subtract(data.getPos()).multiply(SIZE)), VecDirection.fromDirection(hit.getDirection()))) {
             return InteractionResult.CONSUME_PARTIAL; // Keep receiving events for as long as the placement wants to tick
         }
 
