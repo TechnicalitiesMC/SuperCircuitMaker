@@ -1,7 +1,9 @@
 package com.technicalitiesmc.scm.init;
 
 import com.technicalitiesmc.lib.math.VecDirection;
+import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.component.wire.BundledWireComponent;
 import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
 import com.technicalitiesmc.scm.component.wire.WireConnectionState;
 import com.technicalitiesmc.scm.component.wire.WireVisualConnectionState;
@@ -30,11 +32,15 @@ public final class SCMItems {
     public static final RegistryObject<BlockItem> INSPECTOR = register(SCMBlocks.INSPECTOR);
 
     public static final RegistryObject<Item> TINY_REDSTONE = register("tiny_redstone", () -> {
-        return new SimpleComponentItem(new WirePlacement(SCMComponents.REDSTONE_WIRE, (context, connections) -> {
+        return new SimpleComponentItem(new WirePlacement(SCMComponents.REDSTONE_WIRE, (context, connections, disconnectOthers) -> {
             var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
-//            for (var disabledSide : VecDirectionFlags.horizontals().except(connections)) {
-//                connectionStates.put(disabledSide, WireConnectionState.FORCE_DISCONNECTED);
-//            }
+            if (disconnectOthers) {
+                for (var side : VecDirectionFlags.horizontals()) {
+                    if (!connections.has(side)) {
+                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
+                    }
+                }
+            }
             return new ColoredWireComponent(context, connectionStates);
         }, connections -> {
             return SCMComponents.REDSTONE_WIRE.get().getDefaultState()
@@ -49,7 +55,24 @@ public final class SCMItems {
     });
 
     public static final RegistryObject<Item> TINY_RGB_REDSTONE = register("tiny_rgb_redstone", () -> {
-        return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUNDLED_WIRE, false, true));
+//        return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUNDLED_WIRE, false, true));
+        return new SimpleComponentItem(new WirePlacement(SCMComponents.BUNDLED_WIRE, (context, connections, disconnectOthers) -> {
+            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
+            if (disconnectOthers) {
+                for (var side : VecDirectionFlags.horizontals()) {
+                    if (!connections.has(side)) {
+                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
+                    }
+                }
+            }
+            return new BundledWireComponent(context, connectionStates);
+        }, connections -> {
+            return SCMComponents.BUNDLED_WIRE.get().getDefaultState()
+                    .setValue(BundledWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED);
+        }));
     });
 
     public static final RegistryObject<Item> RANDOMIZER = register("randomizer", () -> {

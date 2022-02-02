@@ -6,6 +6,7 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraftforge.registries.RegistryObject;
@@ -73,7 +74,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
 
     @Override
     public void onAdded() {
-        updateConnections(getConnectableSides());
+        updateConnections(getConnectableSides(), true);
 
         var events = new ComponentEventMap.Builder();
         events.add(getConnectableSides(), CircuitEvent.REDSTONE, CircuitEvent.BUNDLED_REDSTONE);
@@ -94,7 +95,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
     @Override
     public void update(ComponentEventMap events, boolean tick) {
         var updates = events.findAny(CircuitEvent.NEIGHBOR_CHANGED).onlyIn(getConnectableSides());
-        var pair = updateConnections(updates);
+        var pair = updateConnections(updates, false);
         var disconnected = pair.getLeft();
         var recalculateNetwork = pair.getRight();
 
@@ -105,7 +106,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
         updateSignals(events, disconnected);
     }
 
-    private Pair<VecDirectionFlags, Boolean> updateConnections(VecDirectionFlags neighborUpdates) {
+    private Pair<VecDirectionFlags, Boolean> updateConnections(VecDirectionFlags neighborUpdates, boolean connectToWires) {
         var disconnected = VecDirectionFlags.none();
         var recalculateNetwork = false;
 
@@ -115,7 +116,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
             var neighbor = getConnectionTarget(side);
             var neighborSide = side.getOpposite();
 
-            if (neighbor instanceof LevelIOComponent) {
+            if (neighbor instanceof LevelIOComponent || (!connectToWires && side.getAxis() != Direction.Axis.Y && neighbor instanceof WireComponentBase<?>)) {
                 continue;
             }
 
@@ -163,6 +164,9 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
                 }
                 // If a connection was made, we're done
                 if (state.isConnected()) {
+                    if (neighbor instanceof WireComponentBase<?> wire) {
+                        wire.updateConnections(VecDirectionFlags.of(side.getOpposite()), true);
+                    }
                     continue;
                 }
 

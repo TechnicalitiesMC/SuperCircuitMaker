@@ -47,6 +47,7 @@ public class WirePlacement implements ComponentPlacement {
             var sides = VecDirectionFlags.deserialize(buf.readByte());
             instance.connectionMap.put(pos, sides);
         }
+        instance.disconnectOthers = buf.readBoolean();
         return instance;
     }
 
@@ -55,13 +56,15 @@ public class WirePlacement implements ComponentPlacement {
         private final List<Vec3i> positions = new ArrayList<>();
         private final List<VecDirectionFlags> connections = new ArrayList<>();
         private final Map<Vec3i, VecDirectionFlags> connectionMap = new HashMap<>();
+        private boolean disconnectOthers;
 
         @Override
         public boolean tick(PlacementContext.Client context, Vec3i clickedPos, VecDirection clickedFace) {
+            disconnectOthers = context.isModifierPressed();
             var pos = clickedPos.offset(clickedFace.getOffset());
             // If the component below is not solid or the wire wouldn't fit here, skip
             if (!context.isTopSolid(pos.below()) || !context.canPlace(pos, component.get())) {
-                return true;
+                return !positions.isEmpty();
             }
 
             var idx = positions.lastIndexOf(pos);
@@ -101,7 +104,7 @@ public class WirePlacement implements ComponentPlacement {
 
         @Override
         public void stopPlacing(PlacementContext.Client context) {
-
+            disconnectOthers = context.isModifierPressed();
         }
 
         private void coalesce() {
@@ -137,13 +140,14 @@ public class WirePlacement implements ComponentPlacement {
                 buf.writeBlockPos(new BlockPos(pos));
                 buf.writeByte(sides.serialize());
             });
+            buf.writeBoolean(disconnectOthers);
         }
 
         @Override
         public void place(PlacementContext.Server context) {
             if (context.tryPutAll(ctx -> {
                 for (var entry : connectionMap.entrySet()) {
-                    if (!ctx.at(entry.getKey(), component.get(), c -> factory.create(c, entry.getValue()))) {
+                    if (!ctx.at(entry.getKey(), component.get(), c -> factory.create(c, entry.getValue(), disconnectOthers))) {
                         return false;
                     }
                 }
@@ -169,7 +173,7 @@ public class WirePlacement implements ComponentPlacement {
     @FunctionalInterface
     public interface Factory {
 
-        CircuitComponent create(ComponentContext context, VecDirectionFlags connections);
+        CircuitComponent create(ComponentContext context, VecDirectionFlags connections, boolean disconnectOthers);
 
     }
 

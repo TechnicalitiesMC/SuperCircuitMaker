@@ -54,6 +54,11 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
         super(SCMComponents.BUNDLED_WIRE, context, INTERFACES);
     }
 
+    public BundledWireComponent(ComponentContext context, Map<VecDirection, WireConnectionState> connectionStates) {
+        this(context);
+        this.getConnectionStates().putAll(connectionStates);
+    }
+
     @Override
     protected BundledWireComponent makeRotatedCopy(ComponentContext context, Rotation rotation,
                                                    Map<VecDirection, WireConnectionState> connectionStates) {
