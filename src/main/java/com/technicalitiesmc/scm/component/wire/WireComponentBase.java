@@ -51,6 +51,8 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
 
     protected abstract T makeRotatedCopy(ComponentContext context, Rotation rotation, Map<VecDirection, WireConnectionState> connectionStates);
 
+    protected abstract boolean isBundled();
+
     protected abstract void updateSignals(ComponentEventMap events, VecDirectionFlags disconnected);
 
     protected abstract void invalidateNetworks();
@@ -118,7 +120,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
             }
 
             // If there is no neighbor
-            if (neighbor == null || (state.isWire() && neighbor.getInterface(neighborSide, state.getTargetInterface()) == null)) {
+            if (neighbor == null || (state.isWire() && neighbor.getInterface(neighborSide, state.getTargetInterface(isBundled())) == null)) {
                 // And it wasn't disconnected
                 if (state != WireConnectionState.DISCONNECTED) {
                     // If it was connected to a wire, schedule a network recalculation
@@ -135,7 +137,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
             var disconnecting = false;
             if (state.isConnected()) {
                 // Find out to what
-                var previousConnection = neighbor.getInterface(neighborSide, state.getTargetInterface());
+                var previousConnection = neighbor.getInterface(neighborSide, state.getTargetInterface(isBundled()));
 
                 // If it is not connected anymore
                 if (previousConnection == null) {
@@ -149,7 +151,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
                 // Go through the connection priority list
                 for (var potentialState : getConnectionPriorities()) {
                     // If we find a matching interface
-                    var itf = neighbor.getInterface(neighborSide, potentialState.getTargetInterface());
+                    var itf = neighbor.getInterface(neighborSide, potentialState.getTargetInterface(isBundled()));
                     if (itf != null) {
                         // If we are connecting to a wire, schedule a network recalculation
                         recalculateNetwork |= potentialState.isWire();

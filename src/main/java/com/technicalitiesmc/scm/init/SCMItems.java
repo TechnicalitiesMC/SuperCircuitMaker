@@ -48,6 +48,10 @@ public final class SCMItems {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.VERTICAL_WIRE, true, false));
     });
 
+    public static final RegistryObject<Item> TINY_RGB_REDSTONE = register("tiny_rgb_redstone", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUNDLED_WIRE, false, true));
+    });
+
     public static final RegistryObject<Item> RANDOMIZER = register("randomizer", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.RANDOMIZER, false, true));
     });

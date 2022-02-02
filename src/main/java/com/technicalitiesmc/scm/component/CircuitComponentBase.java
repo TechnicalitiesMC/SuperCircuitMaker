@@ -1,6 +1,7 @@
 package com.technicalitiesmc.scm.component;
 
 import com.technicalitiesmc.lib.circuit.component.*;
+import com.technicalitiesmc.lib.circuit.interfaces.BundledSource;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
 import com.technicalitiesmc.lib.math.VecDirection;
 import net.minecraft.core.Direction;
@@ -59,6 +60,11 @@ public abstract class CircuitComponentBase<T extends CircuitComponentBase<T>> ex
     protected final int getWeakInput(VecDirection direction) {
         var redstoneSource = findNeighborInterface(direction, RedstoneSource.class);
         return redstoneSource != null ? redstoneSource.getWeakOutput() : 0;
+    }
+
+    @Nullable
+    protected final BundledSource getBundledInput(VecDirection direction) {
+        return findNeighborInterface(direction, BundledSource.class);
     }
 
 }

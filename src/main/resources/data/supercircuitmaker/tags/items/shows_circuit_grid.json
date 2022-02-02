@@ -1,6 +1,7 @@
 {
   "values": [
     "supercircuitmaker:tiny_redstone",
+    "supercircuitmaker:tiny_rgb_redstone",
     "supercircuitmaker:randomizer",
     "supercircuitmaker:delay",
     "supercircuitmaker:pulsar",

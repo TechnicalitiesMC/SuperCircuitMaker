@@ -1,0 +1,20 @@
+{
+  "textures": {
+    "wire": "supercircuitmaker:component/bundled_top",
+    "side1": "supercircuitmaker:component/bundled_side_1",
+    "side2": "supercircuitmaker:component/bundled_side_2",
+    "particle": "supercircuitmaker:component/bundled_top"
+  },
+  "elements":[
+    {
+      "from": [ 12,  0,  4 ],
+      "to":   [ 16,  2, 12 ],
+      "faces": {
+        "up":    { "texture": "#wire",  "tintindex": 0 },
+        "north": { "texture": "#side1", "tintindex": 0 },
+        "south": { "texture": "#side2", "tintindex": 0 },
+        "west":  { "texture": "#wire",  "tintindex": 0 }
+      }
+    }
+  ]
+}

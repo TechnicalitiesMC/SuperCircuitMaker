@@ -5,6 +5,7 @@
   "block.supercircuitmaker.inspector": "Inspector",
   "item.supercircuitmaker.screwdriver": "Screwdriver",
   "item.supercircuitmaker.tiny_redstone": "Tiny Pile of Redstone Dust",
+  "item.supercircuitmaker.tiny_rgb_redstone": "Tiny Pile of RGB Redstone Dust",
   "item.supercircuitmaker.randomizer": "Glowstone Exciter",
   "item.supercircuitmaker.delay": "Quartz Resonator",
   "item.supercircuitmaker.pulsar": "Ender Pulsar",

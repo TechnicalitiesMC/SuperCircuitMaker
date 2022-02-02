@@ -7,6 +7,7 @@ import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.component.digital.*;
 import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
 import com.technicalitiesmc.scm.component.misc.PlatformComponent;
+import com.technicalitiesmc.scm.component.wire.BundledWireComponent;
 import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
 import com.technicalitiesmc.scm.component.wire.VerticalWireComponent;
 import net.minecraft.world.item.ItemStack;
@@ -78,6 +79,12 @@ public final class SCMComponents {
             "vertical_wire", VerticalWireComponent::new,
             new VerticalWireComponent.Client(),
             ComponentSlot.OVERLAY
+    );
+
+    public static final RegistryObject<ComponentType> BUNDLED_WIRE = register(
+            "bundled_wire", BundledWireComponent::new, BundledWireComponent::createState,
+            new BundledWireComponent.Client(),
+            ComponentSlot.DEFAULT
     );
 
     public static final RegistryObject<ComponentType> LEVEL_IO = register(

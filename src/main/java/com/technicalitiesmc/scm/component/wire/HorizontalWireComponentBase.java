@@ -77,7 +77,7 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
                     // Valid if disconnected, or we find a matching interface
                     return !candidate.isConnected()
                             || (candidate == WireConnectionState.INPUT && neighbor instanceof HorizontalWireComponentBase<?>)
-                            || neighbor.getInterface(side.getOpposite(), candidate.getTargetInterface()) != null;
+                            || neighbor.getInterface(side.getOpposite(), candidate.getTargetInterface(isBundled())) != null;
                 });
             }
             // If we have found a new state, update it

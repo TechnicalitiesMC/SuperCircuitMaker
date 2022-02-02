@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "item": "supercircuitmaker:tiny_redstone" },
+    { "tag":  "forge:dyes" }
+  ],
+  "result": {
+    "item": "supercircuitmaker:tiny_rgb_redstone",
+    "count": 8
+  }
+}

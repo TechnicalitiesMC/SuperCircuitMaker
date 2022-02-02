@@ -633,6 +633,15 @@ public class Circuit extends SavedData {
         }
         final var updatesThisTick2 = updatesThisTick;
 
+        // Fire any queued state updates ahead of the tick
+        for (var pos : queuedStateUpdates) {
+            var component = get(pos.pos(), pos.slot());
+            if (component != null) {
+                component.updateExternalState();
+            }
+        }
+        queuedStateUpdates.clear();
+
         // Fire any queued sequential updates ahead of the tick
         for (var pos : queuedSequentialUpdates) {
             var component = get(pos.pos(), pos.slot());

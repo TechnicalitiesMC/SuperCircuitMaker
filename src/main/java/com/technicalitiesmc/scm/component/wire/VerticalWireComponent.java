@@ -86,6 +86,11 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
     }
 
     @Override
+    protected boolean isBundled() {
+        return false;
+    }
+
+    @Override
     protected void updateSignals(ComponentEventMap events, VecDirectionFlags disconnected) {
         // Update the inputs that received changes
         for (var side : events.findAny(CircuitEvent.REDSTONE, CircuitEvent.NEIGHBOR_CHANGED)) {

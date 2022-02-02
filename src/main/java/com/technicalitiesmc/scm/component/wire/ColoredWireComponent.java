@@ -2,6 +2,8 @@ package com.technicalitiesmc.scm.component.wire;
 
 import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
+import com.technicalitiesmc.lib.circuit.interfaces.BundledSink;
+import com.technicalitiesmc.lib.circuit.interfaces.BundledSource;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
 import com.technicalitiesmc.lib.circuit.interfaces.wire.BundledWire;
@@ -31,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 
-public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWireComponent> implements RedstoneWire {
+public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWireComponent> implements RedstoneWire, BundledSource {
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 2 / 16f, 1);
 
@@ -46,10 +48,12 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             .with(RedstoneSource.class, ColoredWireComponent::getRedstoneSource)
             .with(RedstoneSink.class, ColoredWireComponent::getRedstoneSink)
             .with(RedstoneWire.class, ColoredWireComponent::getWire)
+            .with(BundledSource.class, ColoredWireComponent::getBundledSource)
+            .with(BundledSink.class, ColoredWireComponent::getBundledSink)
             .build();
 
     // Internal state
-    private final int[] sideInputs;
+    private final int[] sideInputs = new int[VecDirection.VALUES.length];
     private int input;
     private boolean mustPropagate;
     @Nullable
@@ -62,7 +66,6 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
 
     public ColoredWireComponent(ComponentContext context) {
         super(SCMComponents.REDSTONE_WIRE, context, INTERFACES);
-        this.sideInputs = new int[VecDirection.VALUES.length];
     }
 
     private ColoredWireComponent(
@@ -70,7 +73,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             int[] sideInputs, int input, boolean mustPropagate, DyeColor color, int power
     ) {
         super(SCMComponents.REDSTONE_WIRE, context, INTERFACES, connectionStates);
-        this.sideInputs = Arrays.copyOf(sideInputs, sideInputs.length);
+        System.arraycopy(sideInputs, 0, this.sideInputs, 0, sideInputs.length);
         this.input = input;
         this.mustPropagate = mustPropagate;
         this.color = color;
@@ -108,6 +111,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     @Override
     public ItemStack getPickedItem() {
         return new ItemStack(SCMItems.TINY_REDSTONE.get());
+    }
+
+    @Override
+    protected boolean isBundled() {
+        return false;
     }
 
     @Override
@@ -179,6 +187,9 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             updateExternalState(true, () -> {
                 color = dye.getDyeColor();
             });
+            if (network != null) {
+                network.invalidate();
+            }
             return InteractionResult.sidedSuccess(player.level.isClientSide());
         }
         // Fall back to parent handler
@@ -257,6 +268,18 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         sendEvent(CircuitEvent.REDSTONE, true, sides);
     }
 
+    // Bundled source
+
+    @Override
+    public int getStrongOutput(DyeColor color) {
+        return color == this.color ? power : 0;
+    }
+
+    @Override
+    public int getWeakOutput(DyeColor color) {
+        return color == this.color ? power : 0;
+    }
+
     // Serialization
 
     @Override
@@ -299,6 +322,20 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
 
     private RedstoneWire getWire() {
         return !removed ? this : null;
+    }
+
+    private BundledSource getBundledSource(VecDirection side) {
+        if (getState(side) != WireConnectionState.OUTPUT) {
+            return null;
+        }
+        return this;
+    }
+
+    private BundledSink getBundledSink(VecDirection side) {
+        if (getState(side) != WireConnectionState.INPUT) {
+            return null;
+        }
+        return BundledSink.instance();
     }
 
     public static void createState(ComponentStateBuilder builder) {
