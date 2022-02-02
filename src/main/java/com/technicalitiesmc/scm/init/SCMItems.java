@@ -1,7 +1,6 @@
 package com.technicalitiesmc.scm.init;
 
 import com.technicalitiesmc.lib.math.VecDirection;
-import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.component.wire.BundledWireComponent;
 import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
@@ -34,13 +33,13 @@ public final class SCMItems {
     public static final RegistryObject<Item> TINY_REDSTONE = register("tiny_redstone", () -> {
         return new SimpleComponentItem(new WirePlacement(SCMComponents.REDSTONE_WIRE, (context, connections, disconnectOthers) -> {
             var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
-            if (disconnectOthers) {
-                for (var side : VecDirectionFlags.horizontals()) {
-                    if (!connections.has(side)) {
-                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
-                    }
-                }
-            }
+//            if (disconnectOthers) {
+//                for (var side : VecDirectionFlags.horizontals()) {
+//                    if (!connections.has(side)) {
+//                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
+//                    }
+//                }
+//            }
             return new ColoredWireComponent(context, connectionStates);
         }, connections -> {
             return SCMComponents.REDSTONE_WIRE.get().getDefaultState()
@@ -58,13 +57,13 @@ public final class SCMItems {
 //        return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUNDLED_WIRE, false, true));
         return new SimpleComponentItem(new WirePlacement(SCMComponents.BUNDLED_WIRE, (context, connections, disconnectOthers) -> {
             var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
-            if (disconnectOthers) {
-                for (var side : VecDirectionFlags.horizontals()) {
-                    if (!connections.has(side)) {
-                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
-                    }
-                }
-            }
+//            if (disconnectOthers) {
+//                for (var side : VecDirectionFlags.horizontals()) {
+//                    if (!connections.has(side)) {
+//                        connectionStates.put(side, WireConnectionState.FORCE_DISCONNECTED);
+//                    }
+//                }
+//            }
             return new BundledWireComponent(context, connectionStates);
         }, connections -> {
             return SCMComponents.BUNDLED_WIRE.get().getDefaultState()

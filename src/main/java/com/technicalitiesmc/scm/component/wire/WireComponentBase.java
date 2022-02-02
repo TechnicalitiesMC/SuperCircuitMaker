@@ -95,7 +95,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
     @Override
     public void update(ComponentEventMap events, boolean tick) {
         var updates = events.findAny(CircuitEvent.NEIGHBOR_CHANGED).onlyIn(getConnectableSides());
-        var pair = updateConnections(updates, false);
+        var pair = updateConnections(updates, true);
         var disconnected = pair.getLeft();
         var recalculateNetwork = pair.getRight();
 
