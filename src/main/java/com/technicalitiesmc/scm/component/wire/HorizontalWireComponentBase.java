@@ -82,32 +82,28 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
             }
             // If we have found a new state, update it
             if (newState != state) {
-                manuallySetState(side, newState);
+                setState(side, newState);
 
                 if (neighbor instanceof HorizontalWireComponentBase<?> wire) {
                     wire.setState(side.getOpposite(), newState.getOpposite());
                 }
+
+                var events = ComponentEventMap.empty();
+                var disconnected = VecDirectionFlags.none();
+                if (newState.isConnected()) {
+                    var builder = new ComponentEventMap.Builder();
+                    builder.add(side, CircuitEvent.REDSTONE, CircuitEvent.BUNDLED_REDSTONE);
+                    events = builder.build();
+                } else {
+                    disconnected = VecDirectionFlags.of(side);
+                }
+                updateSignals(events, disconnected);
 
                 return InteractionResult.sidedSuccess(player.level.isClientSide());
             }
         }
 
         return super.use(player, hand, sideHit, hit);
-    }
-
-    private void manuallySetState(VecDirection side, WireConnectionState newState) {
-        setState(side, newState);
-
-        var events = ComponentEventMap.empty();
-        var disconnected = VecDirectionFlags.none();
-        if (newState.isConnected()) {
-            var builder = new ComponentEventMap.Builder();
-            builder.add(side, CircuitEvent.REDSTONE, CircuitEvent.BUNDLED_REDSTONE);
-            events = builder.build();
-        } else {
-            disconnected = VecDirectionFlags.of(side);
-        }
-        updateSignals(events, disconnected);
     }
 
 }
