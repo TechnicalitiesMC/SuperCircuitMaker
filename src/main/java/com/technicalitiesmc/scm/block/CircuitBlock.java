@@ -233,7 +233,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     }
 
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
-        if (!state.is(newState.getBlock()) && !level.isClientSide()) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide() && !moving) {
             var data = this.data.at(level, pos, state);
             if (data != null) {
                 var accessor = data.getAccessor();
@@ -257,6 +257,16 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
             accessor.clearAndRemove(ComponentHarvestContext.forPlayer(player));
         }
         return shouldRemove && super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+    @Override
+    public boolean isStickyBlock(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public boolean canStickTo(BlockState state, BlockState other) {
+        return other.is(this) && state.getValue(DIRECTION) == other.getValue(DIRECTION);
     }
 
     public InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
