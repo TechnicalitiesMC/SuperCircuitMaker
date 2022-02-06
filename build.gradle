@@ -88,7 +88,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${_mcversion}-${_forgeversion}"
 
-    implementation fg.deobf("com.technicalitiesmc:lib:${_mcversion}_${_libversion}")
+    implementation fg.deobf("com.technicalitiesmc:lib:${_libversion}+${_mcversion}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
 }
