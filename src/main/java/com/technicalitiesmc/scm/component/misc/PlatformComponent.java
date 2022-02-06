@@ -118,11 +118,7 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
     // Helpers
 
     private CircuitComponent getOppositeNeighbor(VecDirection side) {
-        var neighbor = findNeighbor(side.getOpposite());
-        if (neighbor != null) {
-            return neighbor;
-        }
-        return !side.isPositive() ? getNeighbor(side.getOpposite(), ComponentSlot.SUPPORT) : null;
+        return findNeighbor(side.getOpposite());
     }
 
     private static <T> BiFunction<PlatformComponent, VecDirection, T> makePassThrough(Class<T> type) {
