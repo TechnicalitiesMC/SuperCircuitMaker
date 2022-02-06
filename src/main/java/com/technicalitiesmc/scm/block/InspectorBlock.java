@@ -155,6 +155,7 @@ public class InspectorBlock extends TKBlock.WithEntity {
                 updateNeighborsInFront(level, pos, state.setValue(POWERED, false));
             }
         }
+        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override
