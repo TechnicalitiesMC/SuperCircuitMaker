@@ -22,7 +22,7 @@ public class SuperCircuitMaker {
 
     public static final CreativeModeTab CREATIVE_TAB = new CreativeModeTab(MODID) {
         public ItemStack makeIcon() {
-            return new ItemStack(SCMItems.CIRCUIT.get());
+            return new ItemStack(SCMItems.TINY_REDSTONE.get());
         }
     };
 
