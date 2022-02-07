@@ -265,7 +265,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
                 sides = sides.and(side);
             }
         }
-        sendEvent(CircuitEvent.REDSTONE, true, sides);
+        sendEvent(CircuitEvent.REDSTONE, sides);
     }
 
     // Bundled source

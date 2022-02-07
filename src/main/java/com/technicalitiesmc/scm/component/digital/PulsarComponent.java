@@ -103,7 +103,7 @@ public class PulsarComponent extends DigitalComponentBase<PulsarComponent> {
                 counter = next;
             });
             if (notify) {
-                sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
+                sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
             }
             if (!input || willBeOn) {
                 scheduleTick(1);

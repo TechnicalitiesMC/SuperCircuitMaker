@@ -217,7 +217,7 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
                 sides = sides.and(side);
             }
         }
-        sendEvent(CircuitEvent.REDSTONE, true, sides);
+        sendEvent(CircuitEvent.REDSTONE, sides);
     }
 
     // Helpers

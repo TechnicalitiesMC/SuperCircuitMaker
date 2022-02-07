@@ -112,7 +112,7 @@ public class RandomizerComponent extends DigitalComponentBase<RandomizerComponen
         updateExternalState(true, () -> {
             state = newState;
         });
-        sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
+        sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
     }
 
     private RedstoneSource getRedstoneSource() {

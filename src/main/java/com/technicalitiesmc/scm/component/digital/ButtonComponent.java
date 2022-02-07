@@ -75,7 +75,7 @@ public class ButtonComponent extends CircuitComponentBase<ButtonComponent> {
                 updateExternalState(true, () -> {
                     state = false;
                 });
-                sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
+                sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
             } else {
                 scheduleTick(1);
             }
@@ -91,7 +91,7 @@ public class ButtonComponent extends CircuitComponentBase<ButtonComponent> {
             updateExternalState(true, () -> {
                 state = true;
             });
-            sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
+            sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
         }
         return InteractionResult.sidedSuccess(false);
     }

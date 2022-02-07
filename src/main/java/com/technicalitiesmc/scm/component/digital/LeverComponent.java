@@ -169,13 +169,13 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
         updateExternalState(true, () -> {
             state = newState;
         });
-        sendEvent(CircuitEvent.REDSTONE, false, getOutputSides());
+        sendEvent(CircuitEvent.REDSTONE, getOutputSides());
     }
 
     public void rotate() {
         setRotation((getRotation() + 1) % 4);
-        sendEvent(CircuitEvent.REDSTONE, false, VecDirectionFlags.horizontals());
-        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.horizontals());
+        sendEvent(CircuitEvent.REDSTONE, VecDirectionFlags.horizontals());
+        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, VecDirectionFlags.horizontals());
     }
 
     private <T> T choose(T first, T second) {

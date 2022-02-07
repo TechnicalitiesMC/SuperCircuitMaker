@@ -85,7 +85,7 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
             var neighbor = getOppositeNeighbor(side);
             // Skip forwarding the event if there is no direct neighbor
             if (neighbor != null) {
-                sendEvent(event, true, side.getOpposite());
+                sendEvent(event, side.getOpposite());
             }
         }
     }
@@ -97,9 +97,9 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
             updateExternalState(true, () -> {
                 conductive = !conductive;
             });
-            sendEvent(CircuitEvent.NEIGHBOR_CHANGED, false, VecDirectionFlags.verticals());
-            sendEvent(CircuitEvent.REDSTONE, false, VecDirectionFlags.verticals());
-            sendEvent(CircuitEvent.BUNDLED_REDSTONE, false, VecDirectionFlags.verticals());
+            sendEvent(CircuitEvent.NEIGHBOR_CHANGED, VecDirectionFlags.verticals());
+            sendEvent(CircuitEvent.REDSTONE, VecDirectionFlags.verticals());
+            sendEvent(CircuitEvent.BUNDLED_REDSTONE, VecDirectionFlags.verticals());
         }
         return super.use(player, hand, sideHit, hit);
     }

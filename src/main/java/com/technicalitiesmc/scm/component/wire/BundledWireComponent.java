@@ -308,7 +308,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
                     sides = sides.and(side);
                 }
             }
-            sendEvent(CircuitEvent.BUNDLED_REDSTONE, true, sides);
+            sendEvent(CircuitEvent.BUNDLED_REDSTONE, sides);
         }
 
         public void computeInput(VecDirectionFlags disconnected) {

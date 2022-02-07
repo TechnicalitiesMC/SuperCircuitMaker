@@ -202,7 +202,7 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
         updateExternalState(true, () -> {
             connectionVisualStates.put(side, state.getVisualState());
         });
-        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, true, side);
+        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, side);
     }
 
     // Serialization

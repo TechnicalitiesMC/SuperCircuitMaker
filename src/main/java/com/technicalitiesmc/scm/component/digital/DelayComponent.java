@@ -112,7 +112,7 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
             updateExternalState(true, () -> {
                 counter = nextIndex;
             });
-            sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
+            sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
             scheduleTick(1);
         }
         return true;

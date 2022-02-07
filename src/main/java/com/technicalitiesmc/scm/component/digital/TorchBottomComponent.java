@@ -7,7 +7,6 @@ import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -78,8 +77,8 @@ public class TorchBottomComponent extends DigitalComponentBase<TorchBottomCompon
                 updateExternalState(true, () -> {
                     state = newState;
                 });
-                sendEvent(CircuitEvent.REDSTONE, false, OUTPUT_SIDES);
-                sendEventAt(VecDirection.POS_Y.getOffset(), CircuitEvent.REDSTONE, false, TorchTopComponent.OUTPUT_SIDES);
+                sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
+                sendEventAt(VecDirection.POS_Y.getOffset(), CircuitEvent.REDSTONE, TorchTopComponent.OUTPUT_SIDES);
             }
         }
         return true;
