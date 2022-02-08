@@ -101,7 +101,6 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
             });
             sendEvent(CircuitEvent.NEIGHBOR_CHANGED, VecDirectionFlags.verticals());
             sendEvent(CircuitEvent.REDSTONE, VecDirectionFlags.verticals());
-            sendEvent(CircuitEvent.BUNDLED_REDSTONE, VecDirectionFlags.verticals());
         }
         return super.use(player, hand, sideHit, hit);
     }
