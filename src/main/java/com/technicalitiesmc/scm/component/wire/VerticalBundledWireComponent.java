@@ -29,7 +29,7 @@ public class VerticalBundledWireComponent extends VerticalWireComponentBase<Vert
     private static final DyeColor[] COLORS = DyeColor.values();
     private static final int[] NO_INPUT = new int[COLORS.length];
 
-    private static final AABB BOUNDS = new AABB(4 / 16f, 0, 4 / 16f, 12 / 16f, 1, 12 / 16f);
+    private static final AABB BOUNDS = new AABB(5 / 16f, 0, 5 / 16f, 11 / 16f, 1, 11 / 16f);
 
     private static final InterfaceLookup<VerticalBundledWireComponent> INTERFACES = InterfaceLookup.<VerticalBundledWireComponent>builder()
             .with(BundledSource.class, VerticalBundledWireComponent::getBundledSource)

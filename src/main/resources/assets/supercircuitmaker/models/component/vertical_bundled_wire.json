@@ -55,8 +55,8 @@
       }
     },
     {
-      "from": [  4,     0,  4 ],
-      "to":   [ 12, 16.01, 12 ],
+      "from": [  5,     0,  5 ],
+      "to":   [ 11, 16.01, 11 ],
       "faces": {
         "down":  { "texture": "#wire", "tintindex": 0 },
         "up":    { "texture": "#wire", "tintindex": 0 },
