@@ -4,8 +4,7 @@ import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.component.wire.BundledWireComponent;
 import com.technicalitiesmc.scm.component.wire.ColoredWireComponent;
-import com.technicalitiesmc.scm.component.wire.WireConnectionState;
-import com.technicalitiesmc.scm.component.wire.WireVisualConnectionState;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.WireConnectionState;
 import com.technicalitiesmc.scm.item.ScrewdriverItem;
 import com.technicalitiesmc.scm.item.SimpleComponentItem;
 import com.technicalitiesmc.scm.placement.PlatformPlacement;
@@ -18,7 +17,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,7 +30,7 @@ public final class SCMItems {
 
     public static final RegistryObject<Item> TINY_REDSTONE = register("tiny_redstone", () -> {
         return new SimpleComponentItem(new WirePlacement(SCMComponents.REDSTONE_WIRE, (context, connections, disconnectOthers) -> {
-            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
+//            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
 //            if (disconnectOthers) {
 //                for (var side : VecDirectionFlags.horizontals()) {
 //                    if (!connections.has(side)) {
@@ -40,13 +38,13 @@ public final class SCMItems {
 //                    }
 //                }
 //            }
-            return new ColoredWireComponent(context, connectionStates);
+            return new ColoredWireComponent(context); // , connectionStates);
         }, connections -> {
             return SCMComponents.REDSTONE_WIRE.get().getDefaultState()
-                    .setValue(ColoredWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(ColoredWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(ColoredWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(ColoredWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED);
+                    .setValue(ColoredWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(ColoredWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED);
         }));
     });
     public static final RegistryObject<Item> REDSTONE_STICK = register("redstone_stick", () -> {
@@ -56,7 +54,7 @@ public final class SCMItems {
     public static final RegistryObject<Item> TINY_RGB_REDSTONE = register("tiny_rgb_redstone", () -> {
 //        return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUNDLED_WIRE, false, true));
         return new SimpleComponentItem(new WirePlacement(SCMComponents.BUNDLED_WIRE, (context, connections, disconnectOthers) -> {
-            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
+//            var connectionStates = new EnumMap<VecDirection, WireConnectionState>(VecDirection.class);
 //            if (disconnectOthers) {
 //                for (var side : VecDirectionFlags.horizontals()) {
 //                    if (!connections.has(side)) {
@@ -64,14 +62,17 @@ public final class SCMItems {
 //                    }
 //                }
 //            }
-            return new BundledWireComponent(context, connectionStates);
+            return new BundledWireComponent(context); // , connectionStates);
         }, connections -> {
             return SCMComponents.BUNDLED_WIRE.get().getDefaultState()
-                    .setValue(BundledWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(BundledWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(BundledWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED)
-                    .setValue(BundledWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireVisualConnectionState.ANODE : WireVisualConnectionState.DISCONNECTED);
+                    .setValue(BundledWireComponent.PROP_NEG_X, connections.has(VecDirection.NEG_X) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_POS_X, connections.has(VecDirection.POS_X) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_NEG_Z, connections.has(VecDirection.NEG_Z) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED)
+                    .setValue(BundledWireComponent.PROP_POS_Z, connections.has(VecDirection.POS_Z) ? WireConnectionState.Visual.ANODE : WireConnectionState.Visual.DISCONNECTED);
         }));
+    });
+    public static final RegistryObject<Item> RGB_REDSTONE_STICK = register("rgb_redstone_stick", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.VERTICAL_BUNDLED_WIRE, true, false));
     });
 
     public static final RegistryObject<Item> RANDOMIZER = register("randomizer", () -> {

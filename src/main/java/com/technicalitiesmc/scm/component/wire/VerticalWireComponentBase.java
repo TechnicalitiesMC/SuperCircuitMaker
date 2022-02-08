@@ -10,19 +10,10 @@ import com.technicalitiesmc.scm.component.InterfaceLookup;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 public abstract class VerticalWireComponentBase<T extends VerticalWireComponentBase<T>> extends WireComponentBase<T> {
 
     protected VerticalWireComponentBase(RegistryObject<ComponentType> type, ComponentContext context, InterfaceLookup<T> interfaceLookup) {
         super(type, context, interfaceLookup);
-    }
-
-    protected VerticalWireComponentBase(
-            RegistryObject<ComponentType> type, ComponentContext context, InterfaceLookup<T> interfaceLookup,
-            Map<VecDirection, WireConnectionState> connectionStates
-    ) {
-        super(type, context, interfaceLookup, connectionStates);
     }
 
     @Override
@@ -32,7 +23,7 @@ public abstract class VerticalWireComponentBase<T extends VerticalWireComponentB
 
     @Nullable
     @Override
-    protected CircuitComponent getConnectionTarget(VecDirection side) {
+    protected CircuitComponent findConnectionTarget(VecDirection side) {
         // Try direct adjacent first
         var neighbor = getSibling(side.isPositive() ? ComponentSlot.SUPPORT : ComponentSlot.DEFAULT);
         if (neighbor != null) {

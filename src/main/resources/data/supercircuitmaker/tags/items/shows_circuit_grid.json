@@ -9,6 +9,7 @@
     "supercircuitmaker:button",
     "supercircuitmaker:platform",
     "supercircuitmaker:redstone_stick",
+    "supercircuitmaker:rgb_redstone_stick",
     "minecraft:redstone_torch",
     "minecraft:lever"
   ]

@@ -13,7 +13,7 @@
         "up":    { "texture": "#wire",  "tintindex": 0 },
         "north": { "texture": "#side1", "tintindex": 0 },
         "south": { "texture": "#side2", "tintindex": 0 },
-        "west":  { "texture": "#wire",  "tintindex": 0 }
+        "east":  { "texture": "#wire",  "tintindex": 0 }
       }
     }
   ]

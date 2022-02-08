@@ -2,16 +2,11 @@ package com.technicalitiesmc.scm.component.wire;
 
 import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
-import com.technicalitiesmc.lib.circuit.interfaces.BundledSink;
-import com.technicalitiesmc.lib.circuit.interfaces.BundledSource;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
-import com.technicalitiesmc.lib.circuit.interfaces.wire.BundledWire;
-import com.technicalitiesmc.lib.circuit.interfaces.wire.RedstoneNetwork;
-import com.technicalitiesmc.lib.circuit.interfaces.wire.RedstoneWire;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.*;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
-import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItemTags;
@@ -23,82 +18,50 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Map;
 
-public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWireComponent> implements RedstoneWire, BundledSource {
+public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWireComponent> implements RedstoneWire {
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 2 / 16f, 1);
 
-    public static final Property<WireVisualConnectionState> PROP_NEG_X = EnumProperty.create("neg_x", WireVisualConnectionState.class);
-    public static final Property<WireVisualConnectionState> PROP_POS_X = EnumProperty.create("pos_x", WireVisualConnectionState.class);
-    public static final Property<WireVisualConnectionState> PROP_NEG_Z = EnumProperty.create("neg_z", WireVisualConnectionState.class);
-    public static final Property<WireVisualConnectionState> PROP_POS_Z = EnumProperty.create("pos_z", WireVisualConnectionState.class);
+    public static final Property<WireConnectionState.Visual> PROP_NEG_X = EnumProperty.create("neg_x", WireConnectionState.Visual.class);
+    public static final Property<WireConnectionState.Visual> PROP_POS_X = EnumProperty.create("pos_x", WireConnectionState.Visual.class);
+    public static final Property<WireConnectionState.Visual> PROP_NEG_Z = EnumProperty.create("neg_z", WireConnectionState.Visual.class);
+    public static final Property<WireConnectionState.Visual> PROP_POS_Z = EnumProperty.create("pos_z", WireConnectionState.Visual.class);
     private static final Property<DyeColor> PROP_EXT_COLOR = EnumProperty.create("color", DyeColor.class);
     private static final Property<Integer> PROP_EXT_POWER = IntegerProperty.create("power", 0, 255);
 
     private static final InterfaceLookup<ColoredWireComponent> INTERFACES = InterfaceLookup.<ColoredWireComponent>builder()
             .with(RedstoneSource.class, ColoredWireComponent::getRedstoneSource)
             .with(RedstoneSink.class, ColoredWireComponent::getRedstoneSink)
-            .with(RedstoneWire.class, ColoredWireComponent::getWire)
-            .with(BundledSource.class, ColoredWireComponent::getBundledSource)
-            .with(BundledSink.class, ColoredWireComponent::getBundledSink)
+            .with(Wire.class, c -> c)
+            .with(RedstoneWire.class, c -> c)
             .build();
 
     // Internal state
     private final int[] sideInputs = new int[VecDirection.VALUES.length];
-    private int input;
-    private boolean mustPropagate;
-    @Nullable
-    private RedstoneNetwork network;
+    private final Conductor conductor = new Conductor();
 
     // External state
     private DyeColor color = DyeColor.LIGHT_GRAY;
     private int power;
-    private boolean removed; // Consistent due to only being updated during removal
 
     public ColoredWireComponent(ComponentContext context) {
         super(SCMComponents.REDSTONE_WIRE, context, INTERFACES);
     }
 
-    private ColoredWireComponent(
-            ComponentContext context, Map<VecDirection, WireConnectionState> connectionStates,
-            int[] sideInputs, int input, boolean mustPropagate, DyeColor color, int power
-    ) {
-        super(SCMComponents.REDSTONE_WIRE, context, INTERFACES, connectionStates);
-        System.arraycopy(sideInputs, 0, this.sideInputs, 0, sideInputs.length);
-        this.input = input;
-        this.mustPropagate = mustPropagate;
-        this.color = color;
-        this.power = power;
-    }
-
-    public ColoredWireComponent(ComponentContext context, Map<VecDirection, WireConnectionState> connectionStates) {
-        this(context);
-        this.getConnectionStates().putAll(connectionStates);
-    }
-
-    @Override
-    protected ColoredWireComponent makeRotatedCopy(ComponentContext context, Rotation rotation,
-                                                   Map<VecDirection, WireConnectionState> connectionStates) {
-        return new ColoredWireComponent(context, connectionStates,
-                Utils.rotateArray(sideInputs, rotation), input, mustPropagate, color, power);
-    }
-
     @Override
     public ComponentState getState() {
         return super.getState()
-                .setValue(PROP_NEG_X, getVisualState(VecDirection.NEG_X))
-                .setValue(PROP_POS_X, getVisualState(VecDirection.POS_X))
-                .setValue(PROP_NEG_Z, getVisualState(VecDirection.NEG_Z))
-                .setValue(PROP_POS_Z, getVisualState(VecDirection.POS_Z))
+                .setValue(PROP_NEG_X, getState(VecDirection.NEG_X).getVisualState())
+                .setValue(PROP_POS_X, getState(VecDirection.POS_X).getVisualState())
+                .setValue(PROP_NEG_Z, getState(VecDirection.NEG_Z).getVisualState())
+                .setValue(PROP_POS_Z, getState(VecDirection.POS_Z).getVisualState())
                 .setExtended(PROP_EXT_COLOR, color)
                 .setExtended(PROP_EXT_POWER, power);
     }
@@ -114,69 +77,68 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     }
 
     @Override
-    protected boolean isBundled() {
-        return false;
+    protected WireConnectionState getNextState(VecDirection side, WireConnectionState state, CircuitComponent neighbor, boolean forced) {
+        return WireUtils.getNextState(side, state, neighbor, RedstoneSource.class, RedstoneSink.class);
     }
 
     @Override
-    protected void updateSignals(ComponentEventMap events, VecDirectionFlags disconnected) {
-        // Update the inputs that received changes
-        for (var side : events.findAny(CircuitEvent.REDSTONE, CircuitEvent.NEIGHBOR_CHANGED)) {
-            var isInput = getState(side) == WireConnectionState.INPUT;
-            sideInputs[side.ordinal()] = isInput ? getWeakInput(side) : 0;
-        }
-        for (var side : disconnected) {
-            sideInputs[side.ordinal()] = 0;
-        }
-
-        // Compute the new total input
-        var newInput = 0;
-        for (var sideInput : sideInputs) {
-            newInput = Math.max(newInput, sideInput);
-        }
-
-        // If the input has changed and either
-        //  - It's turning off and this wire was potentially contributing to the network's value (input == power)
-        //  - The new input would contribute to the current signal (newInput > power)
-        if (newInput != input && ((input == power && newInput < power) || newInput > power)) {
-            // Schedule a propagation pass
-            mustPropagate = true;
-            scheduleSequential();
-        }
-        // Update the input regardless of if it results in a network update or not
-        input = newInput;
+    protected boolean isValidState(VecDirection side, WireConnectionState state, CircuitComponent neighbor) {
+        return WireUtils.isValidState(side, state, neighbor, RedstoneSource.class, RedstoneSink.class);
     }
 
     @Override
-    protected void invalidateNetworks() {
-        // If we have a network, invalidate it
-        if (network != null) {
-            network.invalidate();
+    protected void onStateTransition(VecDirection side, WireConnectionState prevState, WireConnectionState newState) {
+        // Notify of a neighbor change regardless
+        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, side);
+        // If the connection is/was an output, notify a redstone update too
+        if (prevState == WireConnectionState.OUTPUT || newState == WireConnectionState.OUTPUT) {
+            sendEvent(CircuitEvent.REDSTONE, side);
         }
-        if (!removed) {
-            scheduleSequential();
+        // If the connection is/was a wire, invalidate the network
+        if (prevState == WireConnectionState.WIRE || newState == WireConnectionState.WIRE) {
+            conductor.invalidateNetwork();
         }
+        // If the neighbor is a wire, update its connection state too
+        var neighbor = findConnectionTarget(side);
+        if (neighbor != null) {
+            var wire = neighbor.getInterface(side.getOpposite(), Wire.class);
+            if (wire != null) {
+                wire.setState(side.getOpposite(), newState.getOpposite());
+            }
+        }
+    }
+
+    @Override
+    protected void updateSignals(VecDirectionFlags sides) {
+        // Check all the updated sides
+        for (var side : sides) {
+            var isInput = getStateInternal(side) == WireConnectionState.INPUT;
+            sideInputs[side.ordinal()] = isInput ? getInput(side) : 0;
+        }
+        // Compute the new total input and update conductor
+        var newInput = Arrays.stream(sideInputs).max().orElse(0);
+        conductor.setInput(newInput);
+    }
+
+    private int getInput(VecDirection side) {
+        var neighbor = findConnectionTarget(side);
+        if (neighbor == null) {
+            return 0;
+        }
+        // First check if it's a redstone source
+        var redstoneSource = neighbor.getInterface(side.getOpposite(), RedstoneSource.class);
+        if (redstoneSource != null) {
+            return redstoneSource.getWeakOutput();
+        }
+        // If not, check if it's a bundled wire
+        var wire = neighbor.getInterface(side.getOpposite(), BundledWire.class);
+        return wire != null ? wire.getConductor(color).getPower() : 0;
     }
 
     @Override
     public void updateSequential() {
-        if (removed) {
-            return;
-        }
-
-        // If we don't have a network, build it and force propagation
-        // The network will be assigned via the wire interface so no further
-        // network reconstructions will happen during this sequential update
-        if (network == null) {
-            SimpleRedstoneNetwork.build(this);
-            mustPropagate = true;
-        }
-        // Propagate if needed
-        // This flag will be set to false when the wire gets a new power level
-        // so no further propagations will happen during this sequential update
-        if (network != null && mustPropagate) {
-            network.propagate();
-        }
+        super.updateSequential();
+        conductor.doSequentialUpdate();
     }
 
     @Override
@@ -187,19 +149,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             updateExternalState(true, () -> {
                 color = dye.getDyeColor();
             });
-            if (network != null) {
-                network.invalidate();
-            }
+            conductor.invalidateNetwork();
             return InteractionResult.sidedSuccess(player.level.isClientSide());
         }
         // Fall back to parent handler
         return super.use(player, hand, sideHit, hit);
-    }
-
-    @Override
-    public void beforeRemove() {
-        super.beforeRemove();
-        removed = true;
     }
 
     // Redstone wire
@@ -210,74 +164,8 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     }
 
     @Override
-    public void clearNetwork() {
-        network = null;
-        // Schedule a sequential update so that the network gets rebuilt
-        if (!removed) {
-            scheduleSequential();
-            mustPropagate = true;
-        }
-    }
-
-    @Override
-    public void setNetwork(RedstoneNetwork network) {
-        this.network = network;
-    }
-
-    @Override
-    public void visit(Visitor visitor) {
-        for (var side : VecDirection.VALUES) {
-            switch (getState(side)) {
-                case WIRE -> {
-                    var neighbor = findNeighborInterface(side, RedstoneWire.class);
-                    if (neighbor != null) {
-                        visitor.accept(neighbor);
-                    }
-                }
-                case BUNDLED_WIRE -> {
-                    var neighbor = findNeighborInterface(side, BundledWire.class);
-                    if (neighbor != null) {
-                        visitor.accept(neighbor.get(color));
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public int getInput() {
-        return input;
-    }
-
-    @Override
-    public void updateAndNotify(int newPower) {
-        // If another wire causes a propagation, we don't need to do it ourselves anymore
-        mustPropagate = false;
-
-        // Update power level and notify neighbors
-        updateExternalState(true, () -> {
-            power = newPower;
-        });
-
-        var sides = VecDirectionFlags.none();
-        for (var side : VecDirection.VALUES) {
-            if (getState(side) == WireConnectionState.OUTPUT) {
-                sides = sides.and(side);
-            }
-        }
-        sendEvent(CircuitEvent.REDSTONE, sides);
-    }
-
-    // Bundled source
-
-    @Override
-    public int getStrongOutput(DyeColor color) {
-        return color == this.color ? power : 0;
-    }
-
-    @Override
-    public int getWeakOutput(DyeColor color) {
-        return color == this.color ? power : 0;
+    public RedstoneConductor getConductor() {
+        return conductor;
     }
 
     // Serialization
@@ -296,10 +184,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         super.load(tag);
         var inputs = tag.getIntArray("side_inputs");
         System.arraycopy(inputs, 0, sideInputs, 0, sideInputs.length);
-        input = 0;
-        for (var sideInput : sideInputs) {
-            input = Math.max(input, sideInput);
-        }
+        conductor.setInputOnLoad(Arrays.stream(sideInputs).max().orElse(0));
         color = DyeColor.byId(tag.getInt("color"));
         power = tag.getInt("power");
     }
@@ -320,27 +205,61 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         return RedstoneSink.instance();
     }
 
-    private RedstoneWire getWire() {
-        return !removed ? this : null;
-    }
-
-    private BundledSource getBundledSource(VecDirection side) {
-        if (getState(side) != WireConnectionState.OUTPUT) {
-            return null;
-        }
-        return this;
-    }
-
-    private BundledSink getBundledSink(VecDirection side) {
-        if (getState(side) != WireConnectionState.INPUT) {
-            return null;
-        }
-        return BundledSink.instance();
-    }
-
     public static void createState(ComponentStateBuilder builder) {
         builder.add(PROP_NEG_X, PROP_POS_X, PROP_NEG_Z, PROP_POS_Z);
         builder.addExtended(PROP_EXT_COLOR, PROP_EXT_POWER);
+    }
+
+    public final class Conductor extends RedstoneConductor {
+
+        @Override
+        public int getPower() {
+            return power;
+        }
+
+        @Override
+        public void visit(RedstoneConductor.Visitor visitor) {
+            for (var side : VecDirection.VALUES) {
+                if (getStateInternal(side) == WireConnectionState.WIRE) {
+                    var neighbor = findConnectionTarget(side);
+                    if (neighbor == null) {
+                        continue;
+                    }
+                    var rsWire = neighbor.getInterface(side.getOpposite(), RedstoneWire.class);
+                    if (rsWire != null) {
+                        visitor.accept(rsWire.getConductor());
+                        continue;
+                    }
+                    var bundledWire = neighbor.getInterface(side.getOpposite(), BundledWire.class);
+                    if (bundledWire != null) {
+                        visitor.accept(bundledWire.getConductor(color));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onPropagated(int newPower) {
+            // Update power level
+            updateExternalState(true, () -> {
+                power = newPower;
+            });
+
+            // Notify neighbors
+            var sides = VecDirectionFlags.none();
+            for (var side : VecDirection.VALUES) {
+                if (getStateInternal(side) == WireConnectionState.OUTPUT) {
+                    sides = sides.and(side);
+                }
+            }
+            sendEvent(CircuitEvent.REDSTONE, sides);
+        }
+
+        @Override
+        public void scheduleSequentialUpdate() {
+            scheduleSequential();
+        }
+
     }
 
     public static class Client extends ClientComponent {

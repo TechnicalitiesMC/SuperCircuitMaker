@@ -4,12 +4,13 @@ import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
-import com.technicalitiesmc.lib.circuit.interfaces.wire.BundledWire;
-import com.technicalitiesmc.lib.circuit.interfaces.wire.RedstoneWire;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.BundledWire;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.RedstoneWire;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.Wire;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
@@ -37,7 +38,8 @@ public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
             // Pass through redstone I/O
             .with(RedstoneSource.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSource.class))
             .with(RedstoneSink.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneSink.class))
-            // As well as regular and bundled wires
+            // As well as wires
+            .with(Wire.class, VecDirectionFlags.verticals(), makePassThrough(Wire.class))
             .with(RedstoneWire.class, VecDirectionFlags.verticals(), makePassThrough(RedstoneWire.class))
             .with(BundledWire.class, VecDirectionFlags.verticals(), makePassThrough(BundledWire.class))
             .build();

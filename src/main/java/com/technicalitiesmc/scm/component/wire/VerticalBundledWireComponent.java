@@ -20,50 +20,34 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 
-public class BundledWireComponent extends HorizontalWireComponentBase<BundledWireComponent> implements BundledWire {
+public class VerticalBundledWireComponent extends VerticalWireComponentBase<VerticalBundledWireComponent> implements BundledWire {
 
     private static final DyeColor[] COLORS = DyeColor.values();
     private static final int[] NO_INPUT = new int[COLORS.length];
 
-    private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 2 / 16f, 1);
+    private static final AABB BOUNDS = new AABB(4 / 16f, 0, 4 / 16f, 12 / 16f, 1, 12 / 16f);
 
-    public static final Property<WireConnectionState.Visual> PROP_NEG_X = EnumProperty.create("neg_x", WireConnectionState.Visual.class);
-    public static final Property<WireConnectionState.Visual> PROP_POS_X = EnumProperty.create("pos_x", WireConnectionState.Visual.class);
-    public static final Property<WireConnectionState.Visual> PROP_NEG_Z = EnumProperty.create("neg_z", WireConnectionState.Visual.class);
-    public static final Property<WireConnectionState.Visual> PROP_POS_Z = EnumProperty.create("pos_z", WireConnectionState.Visual.class);
-
-    private static final InterfaceLookup<BundledWireComponent> INTERFACES = InterfaceLookup.<BundledWireComponent>builder()
-            .with(BundledSource.class, BundledWireComponent::getBundledSource)
-            .with(BundledSink.class, BundledWireComponent::getBundledSink)
+    private static final InterfaceLookup<VerticalBundledWireComponent> INTERFACES = InterfaceLookup.<VerticalBundledWireComponent>builder()
+            .with(BundledSource.class, VerticalBundledWireComponent::getBundledSource)
+            .with(BundledSink.class, VerticalBundledWireComponent::getBundledSink)
             .with(Wire.class, c -> c)
             .with(BundledWire.class, c -> c)
             .build();
 
     // Internal state
-    private final int[][] sideInputs = new int[VecDirection.VALUES.length][COLORS.length];
+    private final int[][] sideInputs = new int[2][COLORS.length];
     private final Conductor[] conductors = new Conductor[COLORS.length];
 
     // External state
     private final int[] power = new int[COLORS.length];
 
-    public BundledWireComponent(ComponentContext context) {
-        super(SCMComponents.BUNDLED_WIRE, context, INTERFACES);
+    public VerticalBundledWireComponent(ComponentContext context) {
+        super(SCMComponents.VERTICAL_BUNDLED_WIRE, context, INTERFACES);
         Arrays.setAll(conductors, i -> new Conductor(COLORS[i]));
-    }
-
-    @Override
-    public ComponentState getState() {
-        return super.getState()
-                .setValue(PROP_NEG_X, getState(VecDirection.NEG_X).getVisualState())
-                .setValue(PROP_POS_X, getState(VecDirection.POS_X).getVisualState())
-                .setValue(PROP_NEG_Z, getState(VecDirection.NEG_Z).getVisualState())
-                .setValue(PROP_POS_Z, getState(VecDirection.POS_Z).getVisualState());
     }
 
     @Override
@@ -73,7 +57,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
 
     @Override
     public ItemStack getPickedItem() {
-        return new ItemStack(SCMItems.TINY_RGB_REDSTONE.get());
+        return new ItemStack(SCMItems.RGB_REDSTONE_STICK.get());
     }
 
     @Override
@@ -115,7 +99,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
         // Check all the updated sides
         for (var side : sides) {
             var isInput = getStateInternal(side) == WireConnectionState.INPUT;
-            sideInputs[side.ordinal()] = isInput ? getInput(side) : NO_INPUT;
+            sideInputs[side.getAxisDirection().ordinal()] = isInput ? getInput(side) : NO_INPUT;
         }
         // Compute the new total input and update conductor
         for (int i = 0; i < COLORS.length; i++) {
@@ -182,24 +166,12 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        if (tag.contains("wires")) {
-            var wires = tag.getList("wires", Tag.TAG_COMPOUND);
-            for (int i = 0; i < COLORS.length; i++) {
-                var t = wires.getCompound(i);
-                var inputs = t.getIntArray("side_inputs");
-                for (var side : VecDirection.VALUES) {
-                    sideInputs[side.ordinal()][i] = inputs[side.ordinal()];
-                }
-                power[i] = t.getInt("power");
-            }
-        } else {
-            var inputs = tag.getList("side_inputs", Tag.TAG_INT_ARRAY);
-            for (int i = 0; i < inputs.size(); i++) {
-                sideInputs[i] = inputs.getIntArray(i);
-            }
-            var pow = tag.getIntArray("power");
-            System.arraycopy(pow, 0, power, 0, pow.length);
+        var inputs = tag.getList("side_inputs", Tag.TAG_INT_ARRAY);
+        for (int i = 0; i < inputs.size(); i++) {
+            sideInputs[i] = inputs.getIntArray(i);
         }
+        var pow = tag.getIntArray("power");
+        System.arraycopy(pow, 0, power, 0, pow.length);
     }
 
     // Helpers
@@ -216,10 +188,6 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
             return null;
         }
         return BundledSink.instance();
-    }
-
-    public static void createState(ComponentStateBuilder builder) {
-        builder.add(PROP_NEG_X, PROP_POS_X, PROP_NEG_Z, PROP_POS_Z);
     }
 
     public final class Conductor extends RedstoneConductor {
@@ -259,7 +227,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
         @Override
         public void onPropagated(int newPower) {
             // Update power level
-            updateExternalState(true, () -> {
+            updateExternalState(false, () -> {
                 power[color.getId()] = newPower;
             });
 
@@ -289,7 +257,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
 
         @Override
         public ItemStack getPickedItem(ComponentState state) {
-            return new ItemStack(SCMItems.TINY_RGB_REDSTONE.get());
+            return new ItemStack(SCMItems.RGB_REDSTONE_STICK.get());
         }
 
         @Override

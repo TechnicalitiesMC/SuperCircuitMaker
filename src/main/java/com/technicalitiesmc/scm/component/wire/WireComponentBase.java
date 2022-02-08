@@ -6,203 +6,125 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
-import net.minecraft.core.Direction;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.WireConnectionState;
+import com.technicalitiesmc.lib.circuit.interfaces.wire.Wire;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraftforge.registries.RegistryObject;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.Arrays;
 
-public abstract class WireComponentBase<T extends WireComponentBase<T>> extends CircuitComponentBase<T> {
-
-    private static final WireConnectionState[] CONNECTION_PRIORITIES = {
-            WireConnectionState.BUNDLED_WIRE,
-            WireConnectionState.WIRE,
-            WireConnectionState.OUTPUT,
-            WireConnectionState.INPUT
-    };
-
-    // Internal state
-    private final Map<VecDirection, WireConnectionState> connectionStates = new EnumMap<>(VecDirection.class);
+public abstract class WireComponentBase<T extends WireComponentBase<T>> extends CircuitComponentBase<T> implements Wire {
 
     // External state
-    private final Map<VecDirection, WireVisualConnectionState> connectionVisualStates = new EnumMap<>(VecDirection.class);
+    private final WireConnectionState[] connections = new WireConnectionState[VecDirection.VALUES.length];
+    private final WireConnectionState[] connectionsInternal = new WireConnectionState[VecDirection.VALUES.length];
 
     protected WireComponentBase(RegistryObject<ComponentType> type, ComponentContext context, InterfaceLookup<T> interfaceLookup) {
         super(type, context, interfaceLookup);
-        for (var side : getConnectableSides()) {
-            connectionStates.put(side, WireConnectionState.DISCONNECTED);
-            connectionVisualStates.put(side, WireVisualConnectionState.DISCONNECTED);
-        }
-    }
-
-    protected WireComponentBase(
-            RegistryObject<ComponentType> type, ComponentContext context, InterfaceLookup<T> interfaceLookup,
-            Map<VecDirection, WireConnectionState> connectionStates
-    ) {
-        this(type, context, interfaceLookup);
-        this.connectionStates.putAll(connectionStates);
-        connectionStates.forEach((d, s) -> this.connectionVisualStates.put(d, s.getVisualState()));
+        Arrays.fill(connections, WireConnectionState.DISCONNECTED);
+        Arrays.fill(connectionsInternal, WireConnectionState.DISCONNECTED);
     }
 
     protected abstract VecDirectionFlags getConnectableSides();
 
-    protected abstract T makeRotatedCopy(ComponentContext context, Rotation rotation, Map<VecDirection, WireConnectionState> connectionStates);
-
-    protected abstract boolean isBundled();
-
-    protected abstract void updateSignals(ComponentEventMap events, VecDirectionFlags disconnected);
-
-    protected abstract void invalidateNetworks();
-
     @Nullable
-    protected CircuitComponent getConnectionTarget(VecDirection side) {
-        return findNeighbor(side);
+    protected abstract CircuitComponent findConnectionTarget(VecDirection side);
+
+    protected abstract WireConnectionState getNextState(VecDirection side, WireConnectionState currentState, CircuitComponent neighbor, boolean forced);
+
+    protected abstract boolean isValidState(VecDirection side, WireConnectionState state, CircuitComponent neighbor);
+
+    protected abstract void onStateTransition(VecDirection side, WireConnectionState prevState, WireConnectionState newState);
+
+    protected abstract void updateSignals(VecDirectionFlags sides);
+
+    protected final WireConnectionState getState(VecDirection side) {
+        return connections[side.ordinal()];
     }
 
-    protected WireConnectionState[] getConnectionPriorities() {
-        return CONNECTION_PRIORITIES;
+    protected final WireConnectionState getStateInternal(VecDirection side) {
+        return connectionsInternal[side.ordinal()];
+    }
+
+    protected final void setStateInternal(VecDirection side, WireConnectionState newState) {
+        var prevState = getStateInternal(side);
+        setState(side, newState);
+        onStateTransition(side, prevState, newState);
     }
 
     @Override
-    public CircuitComponent copyRotated(ComponentContext context, Rotation rotation) {
-        return makeRotatedCopy(context, rotation, getConnectionStates()); // TODO: [URGENT] actually rotate
+    public void setState(VecDirection side, WireConnectionState state) {
+        connectionsInternal[side.ordinal()] = state;
+        updateExternalState(true, () -> {
+            connections[side.ordinal()] = state;
+        });
     }
 
     @Override
     public void onAdded() {
-        updateConnections(getConnectableSides(), true);
-
-        var events = new ComponentEventMap.Builder();
-        events.add(getConnectableSides(), CircuitEvent.REDSTONE, CircuitEvent.BUNDLED_REDSTONE);
-        updateSignals(events.build(), VecDirectionFlags.none());
-    }
-
-    @Override
-    public void beforeRemove() {
-        super.beforeRemove();
-        invalidateNetworks();
-        for (var side : getConnectableSides()) {
-            if (getState(side).isWire() && getConnectionTarget(side) instanceof WireComponentBase<?> wire) {
-                wire.setState(side.getOpposite(), WireConnectionState.DISCONNECTED);
-            }
-        }
+        super.onAdded();
+        var sides = getConnectableSides();
+        computeConnections(sides, sides);
+        scheduleSequential();
     }
 
     @Override
     public void update(ComponentEventMap events, boolean tick) {
-        var updates = events.findAny(CircuitEvent.NEIGHBOR_CHANGED).onlyIn(getConnectableSides());
-        var pair = updateConnections(updates, true);
-        var disconnected = pair.getLeft();
-        var recalculateNetwork = pair.getRight();
-
-        if (recalculateNetwork) {
-            invalidateNetworks();
-        }
-
-        updateSignals(events, disconnected);
+        var neighborUpdates = events.findAny(CircuitEvent.NEIGHBOR_CHANGED).onlyIn(getConnectableSides());
+        var redstoneUpdates = events.findAny(CircuitEvent.REDSTONE).onlyIn(getConnectableSides());
+        computeConnections(neighborUpdates, redstoneUpdates);
     }
 
-    private Pair<VecDirectionFlags, Boolean> updateConnections(VecDirectionFlags neighborUpdates, boolean connectToWires) {
-        var disconnected = VecDirectionFlags.none();
-        var recalculateNetwork = false;
-
-        // For each side where we received an update
+    private void computeConnections(VecDirectionFlags neighborUpdates, VecDirectionFlags redstoneUpdates) {
+        // Update connection states on all affected sides
+        var changedSides = VecDirectionFlags.none();
         for (var side : neighborUpdates) {
-            var state = getState(side);
-            var neighbor = getConnectionTarget(side);
-            var neighborSide = side.getOpposite();
-
-            if (neighbor instanceof LevelIOComponent || (!connectToWires && side.getAxis() != Direction.Axis.Y && neighbor instanceof WireComponentBase<?>)) {
-                continue;
-            }
-
-            // If there is no neighbor
-            if (neighbor == null || (state.isWire() && neighbor.getInterface(neighborSide, state.getTargetInterface(isBundled())) == null)) {
-                // And it wasn't disconnected
-                if (state != WireConnectionState.DISCONNECTED) {
-                    // If it was connected to a wire, schedule a network recalculation
-                    recalculateNetwork |= state.isWire();
-                    // Set state to disconnected
-                    setState(side, WireConnectionState.DISCONNECTED);
-                    disconnected = disconnected.and(side);
-                }
-                // Nothing else to do without a neighbor
-                continue;
-            }
-
-            // If it was connected
-            var disconnecting = false;
-            if (state.isConnected()) {
-                // Find out to what
-                var previousConnection = neighbor.getInterface(neighborSide, state.getTargetInterface(isBundled()));
-
-                // If it is not connected anymore
-                if (previousConnection == null) {
-                    // Mark for disconnection
-                    disconnecting = true;
-                }
-            }
-
-            // If it's not connected
-            if (state == WireConnectionState.DISCONNECTED || disconnecting) {
-                // Go through the connection priority list
-                for (var potentialState : getConnectionPriorities()) {
-                    // If we find a matching interface
-                    var itf = neighbor.getInterface(neighborSide, potentialState.getTargetInterface(isBundled()));
-                    if (itf != null) {
-                        // If we are connecting to a wire, schedule a network recalculation
-                        recalculateNetwork |= potentialState.isWire();
-                        // Set connection state
-                        setState(side, potentialState);
-                        state = potentialState;
-                        break;
-                    }
-                }
-                // If a connection was made, we're done
-                if (state.isConnected()) {
-                    if (neighbor instanceof WireComponentBase<?> wire) {
-                        wire.updateConnections(VecDirectionFlags.of(side.getOpposite()), true);
-                    }
-                    continue;
-                }
-
-                // Otherwise, if we are disconnecting
-                if (disconnecting) {
-                    // Set state to disconnected
-                    setState(side, WireConnectionState.DISCONNECTED);
-                    disconnected = disconnected.and(side);
-                }
+            var newState = computeNewState(side, false);
+            if (newState != getStateInternal(side)) {
+                setStateInternal(side, newState);
+                changedSides = changedSides.and(side);
             }
         }
 
-        return Pair.of(disconnected, recalculateNetwork);
-    }
-
-    protected Map<VecDirection, WireConnectionState> getConnectionStates() {
-        return connectionStates;
-    }
-
-    protected final WireConnectionState getState(VecDirection side) {
-        return connectionStates.getOrDefault(side, WireConnectionState.DISCONNECTED);
-    }
-
-    protected final WireVisualConnectionState getVisualState(VecDirection side) {
-        return connectionVisualStates.getOrDefault(side, WireVisualConnectionState.DISCONNECTED);
-    }
-
-    protected void setState(VecDirection side, WireConnectionState state) {
-        var previousState = connectionStates.put(side, state);
-        if ((previousState != null && previousState.isWire()) || state.isWire()) {
-            invalidateNetworks();
+        // Also update signal states on all affected sides
+        var signalUpdates = changedSides.and(redstoneUpdates);
+        if (!signalUpdates.isEmpty()) {
+            updateSignals(signalUpdates);
         }
-        updateExternalState(true, () -> {
-            connectionVisualStates.put(side, state.getVisualState());
-        });
-        sendEvent(CircuitEvent.NEIGHBOR_CHANGED, side);
+    }
+
+    protected final WireConnectionState computeNewState(VecDirection side, boolean forceTransition) {
+        var currentState = getStateInternal(side);
+        var neighbor = findConnectionTarget(side);
+
+        // If not forcefully transitioning state and the neighbor is an I/O component, avoid connecting
+        if (!forceTransition && neighbor instanceof LevelIOComponent) {
+            return WireConnectionState.DISCONNECTED;
+        }
+
+        // If the current state is force-disconnected
+        if (currentState == WireConnectionState.FORCE_DISCONNECTED && !forceTransition) {
+            // If we don't have a neighbor anymore, set to disconnected, otherwise stay force-disconnected
+            return neighbor == null ? WireConnectionState.DISCONNECTED : currentState;
+        }
+
+        // If we have no neighbor, disconnect
+        if (neighbor == null) {
+            return WireConnectionState.DISCONNECTED;
+        }
+
+        // If the current state isn't sustainable or we must force a transition
+        if (forceTransition || currentState == WireConnectionState.DISCONNECTED || !isValidState(side, currentState, neighbor)) {
+            // Attempt a state transition
+            var newState = getNextState(side, forceTransition ? currentState : WireConnectionState.DISCONNECTED, neighbor, forceTransition);
+            if (forceTransition && newState == WireConnectionState.DISCONNECTED) {
+                return WireConnectionState.FORCE_DISCONNECTED;
+            }
+            return newState;
+        }
+
+        return currentState;
     }
 
     // Serialization
@@ -211,9 +133,9 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
     public CompoundTag save(CompoundTag tag) {
         tag = super.save(tag);
         var states = new int[VecDirection.VALUES.length];
-        connectionStates.forEach((dir, state) -> {
-            states[dir.ordinal()] = state.ordinal();
-        });
+        for (int i = 0; i < connections.length; i++) {
+            states[i] = connections[i].serialize();
+        }
         tag.putIntArray("connection_states", states);
         return tag;
     }
@@ -222,10 +144,8 @@ public abstract class WireComponentBase<T extends WireComponentBase<T>> extends 
     public void load(CompoundTag tag) {
         super.load(tag);
         var states = tag.getIntArray("connection_states");
-        for (var dir : getConnectableSides()) {
-            var state = WireConnectionState.VALUES[states[dir.ordinal()]];
-            connectionStates.put(dir, state);
-            connectionVisualStates.put(dir, state.getVisualState());
+        for (int i = 0; i < connections.length; i++) {
+            connectionsInternal[i] = connections[i] = WireConnectionState.deserialize(states[i]);
         }
     }
 
