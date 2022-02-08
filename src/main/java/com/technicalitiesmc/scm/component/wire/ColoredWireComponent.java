@@ -7,6 +7,7 @@ import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
 import com.technicalitiesmc.lib.circuit.interfaces.wire.*;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
+import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItemTags;
@@ -145,9 +146,10 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         // If clicked with a dye, paint
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.getItem() instanceof DyeItem dye) {
+        var dyeColor = !stack.isEmpty() ? Utils.getDyeColor(stack) : null;
+        if (dyeColor != null) {
             updateExternalState(true, () -> {
-                color = dye.getDyeColor();
+                color = dyeColor;
             });
             conductor.invalidateNetwork();
             return InteractionResult.sidedSuccess(player.level.isClientSide());
