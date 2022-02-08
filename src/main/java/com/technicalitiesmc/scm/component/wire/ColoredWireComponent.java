@@ -88,7 +88,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         var nextState = WireUtils.getNextState(side, state, neighbor, RedstoneSource.class, RedstoneSink.class);
         if (!forced && nextState == WireConnectionState.WIRE) {
             var rsWire = neighbor.getInterface(side.getOpposite(), RedstoneWire.class);
-            if (rsWire != null && rsWire.getColor() != color) {
+            if (rsWire != null && rsWire.getColor() != null && rsWire.getColor() != color) {
                 return WireConnectionState.FORCE_DISCONNECTED;
             }
         }
