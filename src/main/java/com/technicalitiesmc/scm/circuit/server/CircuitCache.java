@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ public class CircuitCache {
 
     private final ServerLevel level;
     private Map<UUID, Circuit> circuits = new HashMap<>(); // TODO: (N/U) Make final
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     public CircuitCache(ServerLevel level) {
         this.level = level;
@@ -51,7 +54,7 @@ public class CircuitCache {
                 var storage = level.getDataStorage();
                 if (!saved[0]) {
                     saved[0] = true;
-                    storage.save();
+                    threadPool.submit(storage::save);
                 }
                 storage.cache.remove(getPath(c.getId()));
                 return true;
