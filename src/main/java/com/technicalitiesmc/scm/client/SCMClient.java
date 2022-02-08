@@ -4,16 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.lib.client.circuit.ComponentRenderTypes;
-import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
-import com.technicalitiesmc.scm.block.CircuitBlock;
 import com.technicalitiesmc.scm.client.model.CircuitModel;
 import com.technicalitiesmc.scm.client.screen.TimingScreen;
 import com.technicalitiesmc.scm.init.SCMBlocks;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMMenus;
-import com.technicalitiesmc.scm.placement.ComponentPlacementHandler;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -23,8 +19,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,18 +26,18 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.RegistryManager;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = SuperCircuitMaker.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class SCMClient {
@@ -51,17 +45,9 @@ public class SCMClient {
     private static final Map<ComponentState, BlockState> MODEL_STATES = new IdentityHashMap<>();
     private static final Map<ComponentState, BakedModel> MODELS = new IdentityHashMap<>();
 
-    private static int busyTimer = 0;
-    private static boolean partial = false;
-    private static KeyMapping partialMapping;
-    private static InteractionHand partialHand;
-
     @SubscribeEvent
     public static void setup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MinecraftForge.EVENT_BUS.addListener(SCMClient::onClickInput);
-            MinecraftForge.EVENT_BUS.addListener(SCMClient::onClientTick);
-            MinecraftForge.EVENT_BUS.addListener(SCMClient::onDrawBlockHighlight);
             registerScreens();
         });
     }
@@ -139,100 +125,6 @@ public class SCMClient {
             }
             MODELS.put(componentState, model);
         });
-    }
-
-    private static void onClickInput(InputEvent.ClickInputEvent event) {
-        if (busyTimer > 0) {
-            event.setCanceled(true);
-            return;
-        }
-        var minecraft = Minecraft.getInstance();
-        if (!(minecraft.hitResult instanceof BlockHitResult hit)) {
-            return;
-        }
-        var state = Utils.resolveHit(minecraft.level, hit);
-        if (!(state.getBlock() instanceof CircuitBlock block)) {
-            return;
-        }
-
-        InteractionResult result;
-        if (event.isUseItem()) {
-            if (partial) {
-                result = InteractionResult.CONSUME_PARTIAL;
-            } else {
-                result = minecraft.player.isCrouching() ? InteractionResult.PASS : block.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
-            }
-            if (result == InteractionResult.PASS) {
-                result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
-            }
-            if (result == InteractionResult.CONSUME_PARTIAL) {
-                partial = true;
-                partialMapping = event.getKeyMapping();
-                partialHand = event.getHand();
-            }
-        } else if (event.isAttack()) {
-            result = block.onClientClicked(state, minecraft.level, hit.getBlockPos(), minecraft.player, event.getHand(), hit);
-        } else {
-            return;
-        }
-        if (result == InteractionResult.PASS) {
-            return;
-        }
-        event.setCanceled(result.consumesAction());
-        event.setSwingHand(result.shouldSwing());
-        if (result.consumesAction() && result != InteractionResult.CONSUME_PARTIAL) {
-            busyTimer = 5;
-        }
-    }
-
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
-
-        if (busyTimer > 0) {
-            busyTimer--;
-        }
-
-        if (!partial) {
-            return;
-        }
-        var minecraft = Minecraft.getInstance();
-        if (minecraft.level == null || minecraft.player == null || !(minecraft.hitResult instanceof BlockHitResult hit)) {
-            return;
-        }
-        var state = Utils.resolveHit(minecraft.level, hit);
-        if (!(state.getBlock() instanceof CircuitBlock)) {
-            return;
-        }
-
-        if (partialMapping.isDown()) {
-            var result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, partialHand, hit);
-            if (result != InteractionResult.CONSUME_PARTIAL) {
-                partial = false;
-                busyTimer = 5;
-            }
-        } else {
-            if (ComponentPlacementHandler.onClientStopUsing(minecraft.level, minecraft.player) || busyTimer > 0) {
-                partial = false;
-                busyTimer = 2;
-            }
-        }
-    }
-
-    public static void onDrawBlockHighlight(DrawSelectionEvent.HighlightBlock event) {
-        var minecraft = Minecraft.getInstance();
-        if (!(minecraft.hitResult instanceof BlockHitResult hit)) {
-            return;
-        }
-        var state = Utils.resolveHit(minecraft.level, hit);
-        if (!(state.getBlock() instanceof CircuitBlock)) {
-            return;
-        }
-
-        if (ComponentPlacementHandler.onDrawBlockHighlight(minecraft.level, minecraft.player, event.getMultiBufferSource(), event.getPoseStack(), event.getPartialTicks())) {
-            event.setCanceled(true);
-        }
     }
 
     public static BlockState getBlockState(ComponentState state) {

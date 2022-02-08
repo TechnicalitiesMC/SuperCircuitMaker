@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RGB",
+    "WPP",
+    "SPP"
+  ],
+  "key": {
+    "R": { "tag":  "forge:dyes/red" },
+    "G": { "tag":  "forge:dyes/green" },
+    "B": { "tag":  "forge:dyes/blue" },
+    "P": { "item": "supercircuitmaker:platform" },
+    "W": { "tag":  "minecraft:wool" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": {
+    "item": "supercircuitmaker:palette",
+    "count": 1
+  }
+}

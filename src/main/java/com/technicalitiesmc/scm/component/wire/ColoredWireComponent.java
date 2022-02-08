@@ -10,14 +10,14 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
+import com.technicalitiesmc.scm.network.PickPaletteColorPacket;
+import com.technicalitiesmc.scm.network.SCMNetworkHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -34,7 +34,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
     public static final Property<WireConnectionState.Visual> PROP_POS_X = EnumProperty.create("pos_x", WireConnectionState.Visual.class);
     public static final Property<WireConnectionState.Visual> PROP_NEG_Z = EnumProperty.create("neg_z", WireConnectionState.Visual.class);
     public static final Property<WireConnectionState.Visual> PROP_POS_Z = EnumProperty.create("pos_z", WireConnectionState.Visual.class);
-    private static final Property<DyeColor> PROP_EXT_COLOR = EnumProperty.create("color", DyeColor.class);
+    public static final Property<DyeColor> PROP_EXT_COLOR = EnumProperty.create("color", DyeColor.class);
     private static final Property<Integer> PROP_EXT_POWER = IntegerProperty.create("power", 0, 255);
 
     private static final InterfaceLookup<ColoredWireComponent> INTERFACES = InterfaceLookup.<ColoredWireComponent>builder()
@@ -54,6 +54,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
 
     public ColoredWireComponent(ComponentContext context) {
         super(SCMComponents.REDSTONE_WIRE, context, INTERFACES);
+    }
+
+    public ColoredWireComponent(ComponentContext context, DyeColor color) {
+        this(context);
+        this.color = color;
     }
 
     @Override
@@ -79,7 +84,14 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
 
     @Override
     protected WireConnectionState getNextState(VecDirection side, WireConnectionState state, CircuitComponent neighbor, boolean forced) {
-        return WireUtils.getNextState(side, state, neighbor, RedstoneSource.class, RedstoneSink.class);
+        var nextState = WireUtils.getNextState(side, state, neighbor, RedstoneSource.class, RedstoneSink.class);
+        if (!forced && nextState == WireConnectionState.WIRE) {
+            var rsWire = neighbor.getInterface(side.getOpposite(), RedstoneWire.class);
+            if (rsWire != null && rsWire.getColor() != color) {
+                return WireConnectionState.FORCE_DISCONNECTED;
+            }
+        }
+        return nextState;
     }
 
     @Override
@@ -277,9 +289,17 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         }
 
         @Override
+        public void onPicking(ComponentState state, Player player) {
+            var stack = player.getOffhandItem();
+            if (!stack.isEmpty() && stack.is(SCMItems.PALETTE.get())) {
+                SCMNetworkHandler.sendToServer(new PickPaletteColorPacket(state.getExtended(PROP_EXT_COLOR)));
+            }
+        }
+
+        @Override
         public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
             var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && (stack.getItem() instanceof DyeItem || stack.is(SCMItemTags.ROTATES_COMPONENTS))) {
+            if (!stack.isEmpty() && Utils.getDyeColor(stack) != null) {
                 return InteractionResult.sidedSuccess(true);
             }
             return super.use(state, player, hand, sideHit, hit);

@@ -28,6 +28,7 @@ public class SCMNetworkHandler {
         register(ComponentPlacePacket.class, ComponentPlacePacket::new);
         register(ComponentBreakPacket.class, ComponentBreakPacket::new);
         register(ComponentUsePacket.class, ComponentUsePacket::new);
+        register(PickPaletteColorPacket.class, PickPaletteColorPacket::new);
     }
 
     private static <T extends Packet> void register(Class<T> type, Function<FriendlyByteBuf, T> decoder) {
