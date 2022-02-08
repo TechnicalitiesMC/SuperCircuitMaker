@@ -11,9 +11,12 @@ import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItems;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
@@ -29,6 +32,8 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
     };
 
     private static final AABB BOUNDS = new AABB(6/16f, 0, 6/16f, 10/16f, 1, 10/16f);
+
+    private static final Property<Integer> PROP_EXT_POWER = IntegerProperty.create("power", 0, 255);
 
     private static final InterfaceLookup<VerticalWireComponent> INTERFACES = InterfaceLookup.<VerticalWireComponent>builder()
             .with(RedstoneSource.class, VecDirectionFlags.verticals(), VerticalWireComponent::getRedstoneSource)
@@ -68,6 +73,11 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
                                                    Map<VecDirection, WireConnectionState> connectionStates) {
         return new VerticalWireComponent(context, connectionStates,
                 Utils.rotateArray(sideInputs, rotation), input, mustPropagate, power);
+    }
+
+    @Override
+    public ComponentState getState() {
+        return super.getState().setExtended(PROP_EXT_POWER, power);
     }
 
     @Override
@@ -220,6 +230,28 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
         sendEvent(CircuitEvent.REDSTONE, sides);
     }
 
+    // Serialization
+
+    @Override
+    public CompoundTag save(CompoundTag tag) {
+        tag = super.save(tag);
+        tag.putIntArray("side_inputs", Arrays.copyOf(sideInputs, sideInputs.length));
+        tag.putInt("power", power);
+        return tag;
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        var inputs = tag.getIntArray("side_inputs");
+        System.arraycopy(inputs, 0, sideInputs, 0, sideInputs.length);
+        input = 0;
+        for (var sideInput : sideInputs) {
+            input = Math.max(input, sideInput);
+        }
+        power = tag.getInt("power");
+    }
+
     // Helpers
 
     private RedstoneSource getRedstoneSource(VecDirection side) {
@@ -240,6 +272,10 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
         return !removed ? this : null;
     }
 
+    public static void createState(ComponentStateBuilder builder) {
+        builder.addExtended(PROP_EXT_POWER);
+    }
+
     public static class Client extends ClientComponent {
 
         @Override
@@ -250,6 +286,17 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
         @Override
         public ItemStack getPickedItem(ComponentState state) {
             return new ItemStack(SCMItems.REDSTONE_STICK.get());
+        }
+
+        @Override
+        public int getTint(ComponentState state, int tintIndex) {
+            if (tintIndex == 0) {
+                var power = state.getExtended(PROP_EXT_POWER);
+                int minBrightness = 128;
+                int pow = (int) ((power / 255F) * (255 - minBrightness) + minBrightness);
+                return (pow << 16) | (pow << 8) | pow;
+            }
+            return super.getTint(state, tintIndex);
         }
 
     }

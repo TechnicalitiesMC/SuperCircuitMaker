@@ -76,7 +76,7 @@ public final class SCMComponents {
             ComponentSlot.DEFAULT
     );
     public static final RegistryObject<ComponentType> VERTICAL_WIRE = register(
-            "vertical_wire", VerticalWireComponent::new,
+            "vertical_wire", VerticalWireComponent::new, VerticalWireComponent::createState,
             new VerticalWireComponent.Client(),
             ComponentSlot.OVERLAY
     );
