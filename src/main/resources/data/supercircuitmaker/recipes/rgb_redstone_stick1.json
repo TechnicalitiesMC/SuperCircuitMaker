@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "item": "supercircuitmaker:redstone_stick" },
+    { "tag":  "forge:dyes" }
+  ],
+  "result": {
+    "item": "supercircuitmaker:rgb_redstone_stick",
+    "count": 8
+  }
+}
