@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -79,25 +80,32 @@ public class ComponentPlacePacket implements Packet {
             buf.release();
 
             var accessor = data.getAccessor();
-            placement.place(new SimpleServerContext(accessor, level, pos, item, context.getSender().isCreative()));
+            placement.place(new SimpleServerContext(context.getSender(), accessor, level, pos, item, context.getSender().isCreative()));
         });
         return true;
     }
 
     private static class SimpleServerContext implements PlacementContext.Server {
 
+        private final Player player;
         private final ServerTileAccessor accessor;
         private final ServerLevel level;
         private final BlockPos pos;
         private final ItemStack item;
         private final boolean isCreative;
 
-        private SimpleServerContext(ServerTileAccessor accessor, ServerLevel level, BlockPos pos, ItemStack item, boolean isCreative) {
+        private SimpleServerContext(Player player, ServerTileAccessor accessor, ServerLevel level, BlockPos pos, ItemStack item, boolean isCreative) {
+            this.player = player;
             this.accessor = accessor;
             this.level = level;
             this.pos = pos;
             this.item = item;
             this.isCreative = isCreative;
+        }
+
+        @Override
+        public Player getPlayer() {
+            return player;
         }
 
         @Override

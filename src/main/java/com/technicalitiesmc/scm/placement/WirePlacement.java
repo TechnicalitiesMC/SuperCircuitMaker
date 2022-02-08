@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public class WirePlacement implements ComponentPlacement {
         public void place(PlacementContext.Server context) {
             if (context.tryPutAll(ctx -> {
                 for (var entry : connectionMap.entrySet()) {
-                    if (!ctx.at(entry.getKey(), component.get(), c -> factory.create(c, entry.getValue(), disconnectOthers))) {
+                    if (!ctx.at(entry.getKey(), component.get(), c -> factory.create(c, entry.getValue(), disconnectOthers, context.getPlayer()))) {
                         return false;
                     }
                 }
@@ -159,11 +160,11 @@ public class WirePlacement implements ComponentPlacement {
         }
 
         @Override
-        public Multimap<Vec3i, ComponentState> getPreviewStates() {
+        public Multimap<Vec3i, ComponentState> getPreviewStates(Player player) {
             coalesce();
             var builder = ImmutableMultimap.<Vec3i, ComponentState>builder();
             connectionMap.forEach((pos, connections) -> {
-                builder.put(pos, stateFactory.create(connections));
+                builder.put(pos, stateFactory.create(connections, player));
             });
             return builder.build();
         }
@@ -173,14 +174,14 @@ public class WirePlacement implements ComponentPlacement {
     @FunctionalInterface
     public interface Factory {
 
-        CircuitComponent create(ComponentContext context, VecDirectionFlags connections, boolean disconnectOthers);
+        CircuitComponent create(ComponentContext context, VecDirectionFlags connections, boolean disconnectOthers, Player player);
 
     }
 
     @FunctionalInterface
     public interface StateFactory {
 
-        ComponentState create(VecDirectionFlags connections);
+        ComponentState create(VecDirectionFlags connections, Player player);
 
     }
 

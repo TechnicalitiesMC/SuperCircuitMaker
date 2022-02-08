@@ -128,7 +128,7 @@ public class ComponentPlacementHandler {
         }
 
         var placement = data.getPlacement();
-        var previewStates = placement.getPreviewStates();
+        var previewStates = placement.getPreviewStates(player);
         if (previewStates.isEmpty()) {
             return false;
         }
