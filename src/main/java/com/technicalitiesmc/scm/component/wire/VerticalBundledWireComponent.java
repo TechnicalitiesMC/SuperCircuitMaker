@@ -32,10 +32,10 @@ public class VerticalBundledWireComponent extends VerticalWireComponentBase<Vert
     private static final AABB BOUNDS = new AABB(5 / 16f, 0, 5 / 16f, 11 / 16f, 1, 11 / 16f);
 
     private static final InterfaceLookup<VerticalBundledWireComponent> INTERFACES = InterfaceLookup.<VerticalBundledWireComponent>builder()
-            .with(BundledSource.class, VerticalBundledWireComponent::getBundledSource)
-            .with(BundledSink.class, VerticalBundledWireComponent::getBundledSink)
-            .with(Wire.class, c -> c)
-            .with(BundledWire.class, c -> c)
+            .with(BundledSource.class, VecDirectionFlags.verticals(), VerticalBundledWireComponent::getBundledSource)
+            .with(BundledSink.class, VecDirectionFlags.verticals(), VerticalBundledWireComponent::getBundledSink)
+            .with(Wire.class, VecDirectionFlags.verticals(), c -> c)
+            .with(BundledWire.class, VecDirectionFlags.verticals(), c -> c)
             .build();
 
     // Internal state

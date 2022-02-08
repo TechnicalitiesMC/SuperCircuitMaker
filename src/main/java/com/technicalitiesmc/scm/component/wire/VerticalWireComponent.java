@@ -29,10 +29,10 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
     private static final Property<Integer> PROP_EXT_POWER = IntegerProperty.create("power", 0, 255);
 
     private static final InterfaceLookup<VerticalWireComponent> INTERFACES = InterfaceLookup.<VerticalWireComponent>builder()
-            .with(RedstoneSource.class, VerticalWireComponent::getRedstoneSource)
-            .with(RedstoneSink.class, VerticalWireComponent::getRedstoneSink)
-            .with(Wire.class, c -> c)
-            .with(RedstoneWire.class, c -> c)
+            .with(RedstoneSource.class, VecDirectionFlags.verticals(), VerticalWireComponent::getRedstoneSource)
+            .with(RedstoneSink.class, VecDirectionFlags.verticals(), VerticalWireComponent::getRedstoneSink)
+            .with(Wire.class, VecDirectionFlags.verticals(), c -> c)
+            .with(RedstoneWire.class, VecDirectionFlags.verticals(), c -> c)
             .build();
 
     // Internal state
