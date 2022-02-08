@@ -29,7 +29,7 @@ import java.util.function.BiFunction;
 
 public class PlatformComponent extends CircuitComponentBase<PlatformComponent> {
 
-    private static final AABB BOUNDS = new AABB(0, 14 / 16D, 0, 1, 1, 1);
+    private static final AABB BOUNDS = new AABB(0, 12 / 16D, 0, 1, 1, 1);
 
     private static final Property<Boolean> PROP_CONDUCTIVE = BooleanProperty.create("conductive");
 

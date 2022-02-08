@@ -28,7 +28,7 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
             WireConnectionState.INPUT
     };
 
-    private static final AABB BOUNDS = new AABB(5/16f, 0, 5/16f, 11/16f, 1, 11/16f);
+    private static final AABB BOUNDS = new AABB(6/16f, 0, 6/16f, 10/16f, 1, 10/16f);
 
     private static final InterfaceLookup<VerticalWireComponent> INTERFACES = InterfaceLookup.<VerticalWireComponent>builder()
             .with(RedstoneSource.class, VecDirectionFlags.verticals(), VerticalWireComponent::getRedstoneSource)

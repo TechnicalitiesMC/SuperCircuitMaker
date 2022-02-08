@@ -55,15 +55,15 @@
       }
     },
     {
-      "from": [ 6.75, 0,     6.75 ],
-      "to":   [ 9.25, 16.01, 9.25 ],
+      "from": [  6,     0,  6 ],
+      "to":   [ 10, 16.01, 10 ],
       "faces": {
-        "down":  { "texture": "#wire" },
-        "up":    { "texture": "#wire" },
-        "north": { "texture": "#wire" },
-        "south": { "texture": "#wire" },
-        "west":  { "texture": "#wire" },
-        "east":  { "texture": "#wire" }
+        "down":  { "texture": "#wire", "tintindex": 0 },
+        "up":    { "texture": "#wire", "tintindex": 0 },
+        "north": { "texture": "#wire", "tintindex": 0 },
+        "south": { "texture": "#wire", "tintindex": 0 },
+        "west":  { "texture": "#wire", "tintindex": 0 },
+        "east":  { "texture": "#wire", "tintindex": 0 }
       }
     }
   ]
