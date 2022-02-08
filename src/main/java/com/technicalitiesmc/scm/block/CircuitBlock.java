@@ -88,6 +88,8 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
 
     public static final Property<Direction> DIRECTION = DirectionProperty.create("face");
 
+    public static boolean picking;
+
     private final BlockData<Data> data = addComponent("circuit", ctx -> new BlockData<>(ctx, Data::new));
 
     public CircuitBlock() {
@@ -180,6 +182,10 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
                     } else if (accessor instanceof ClientTile ct) {
                         var componentState = ct.getState(hitPos.toAbsolute().pos(), hitPos.slot());
                         if (componentState != null) {
+                            if (picking) {
+                                componentState.onPicking(player);
+                                picking = false;
+                            }
                             return componentState.getPickedItem();
                         }
                     }
