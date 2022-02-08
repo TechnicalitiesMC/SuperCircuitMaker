@@ -1,15 +1,16 @@
 package com.technicalitiesmc.scm.placement;
 
+import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.math.VecDirection;
-import com.technicalitiesmc.scm.init.SCMComponents;
 import net.minecraft.core.Vec3i;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
-public class PlatformPlacement extends SimplePlacement {
+public class NoTopLayerSimplePlacement extends SimplePlacement {
 
-    public PlatformPlacement() {
-        super(SCMComponents.PLATFORM, true, false);
+    public NoTopLayerSimplePlacement(RegistryObject<ComponentType> type, boolean tryClickPosition, boolean requiresSolidSurface) {
+        super(type, tryClickPosition, requiresSolidSurface);
     }
 
     @Nullable

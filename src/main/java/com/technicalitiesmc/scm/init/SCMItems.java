@@ -8,7 +8,7 @@ import com.technicalitiesmc.lib.circuit.interfaces.wire.WireConnectionState;
 import com.technicalitiesmc.scm.item.PaletteItem;
 import com.technicalitiesmc.scm.item.ScrewdriverItem;
 import com.technicalitiesmc.scm.item.SimpleComponentItem;
-import com.technicalitiesmc.scm.placement.PlatformPlacement;
+import com.technicalitiesmc.scm.placement.NoTopLayerSimplePlacement;
 import com.technicalitiesmc.scm.placement.SimplePlacement;
 import com.technicalitiesmc.scm.placement.WirePlacement;
 import net.minecraft.world.item.BlockItem;
@@ -53,7 +53,7 @@ public final class SCMItems {
         }));
     });
     public static final RegistryObject<Item> REDSTONE_STICK = register("redstone_stick", () -> {
-        return new SimpleComponentItem(new SimplePlacement(SCMComponents.VERTICAL_WIRE, true, false));
+        return new SimpleComponentItem(new NoTopLayerSimplePlacement(SCMComponents.VERTICAL_WIRE, true, false));
     });
 
     public static final RegistryObject<Item> TINY_RGB_REDSTONE = register("tiny_rgb_redstone", () -> {
@@ -77,7 +77,7 @@ public final class SCMItems {
         }));
     });
     public static final RegistryObject<Item> RGB_REDSTONE_STICK = register("rgb_redstone_stick", () -> {
-        return new SimpleComponentItem(new SimplePlacement(SCMComponents.VERTICAL_BUNDLED_WIRE, true, false));
+        return new SimpleComponentItem(new NoTopLayerSimplePlacement(SCMComponents.VERTICAL_BUNDLED_WIRE, true, false));
     });
 
     public static final RegistryObject<Item> RANDOMIZER = register("randomizer", () -> {
@@ -99,7 +99,7 @@ public final class SCMItems {
     });
 
     public static final RegistryObject<Item> PLATFORM = register("platform", () -> {
-        return new SimpleComponentItem(new PlatformPlacement());
+        return new SimpleComponentItem(new NoTopLayerSimplePlacement(SCMComponents.PLATFORM, true, false));
     });
 
     public static final RegistryObject<Item> SCREWDRIVER = register("screwdriver", ScrewdriverItem::new);
