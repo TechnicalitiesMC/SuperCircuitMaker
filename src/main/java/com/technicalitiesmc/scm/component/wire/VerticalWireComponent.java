@@ -147,8 +147,11 @@ public class VerticalWireComponent extends VerticalWireComponentBase<VerticalWir
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        if (!tag.contains("side_inputs")) {
+            return; // Has no data, so skip
+        }
         var inputs = tag.getIntArray("side_inputs");
-        System.arraycopy(inputs, 0, sideInputs, 0, sideInputs.length);
+        System.arraycopy(inputs, 0, sideInputs, 0, inputs.length);
         conductor.setInputOnLoad(Arrays.stream(sideInputs).max().orElse(0));
         power = tag.getInt("power");
     }
