@@ -207,8 +207,11 @@ public class ComponentInstance {
 
         @Override
         public void updateExternalState(boolean reRender, Runnable action) {
-            if (component == null) {
+            if (component == null || !getCircuit().isTicking()) {
                 action.run();
+                if (component != null && reRender && updateState()) {
+                    tile.markForUpdate(pos, getSlot());
+                }
                 return;
             }
 

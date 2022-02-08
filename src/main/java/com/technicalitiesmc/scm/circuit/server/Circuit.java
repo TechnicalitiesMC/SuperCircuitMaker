@@ -57,6 +57,7 @@ public class Circuit extends SavedData {
     private long currentTime = 0;
     private boolean invalid = false;
     private boolean shouldTrySplit = false;
+    private boolean ticking = false;
 
     public Circuit(CircuitCache cache, UUID id, boolean initialize) {
         this.cache = cache;
@@ -615,153 +616,163 @@ public class Circuit extends SavedData {
         tickLevels.add(level);
     }
 
+    public boolean isTicking() {
+        return ticking;
+    }
+
     /**
      * Returns true if invalid
      */
     void update() { // TODO: Clean up this whole thing
-        var levels = tickLevels.size();
-        var firstLevel = tickLevels.stream().findFirst();
-        tickLevels.clear();
-        // If it's been queued up in multiple levels or has already ticked, skip
-        if (levels != 1) {
-            return;
-        }
+        try {
+            ticking = true;
 
-        var updatesThisTick = queuedTicks.remove(currentTime);
-        if (updatesThisTick == null) {
-            updatesThisTick = Collections.emptySet();
-        }
-        final var updatesThisTick2 = updatesThisTick;
-
-        // Fire any queued state updates ahead of the tick
-        for (var pos : queuedStateUpdates) {
-            var component = get(pos.pos(), pos.slot());
-            if (component != null) {
-                component.updateExternalState();
-            }
-        }
-        queuedStateUpdates.clear();
-
-        // Fire any queued sequential updates ahead of the tick
-        for (var pos : queuedSequentialUpdates) {
-            var component = get(pos.pos(), pos.slot());
-            if (component != null) {
-                component.updateSequential();
-            }
-        }
-        queuedSequentialUpdates.clear();
-
-        // Fire any queued state updates ahead of the tick
-        for (var pos : queuedStateUpdates) {
-            var component = get(pos.pos(), pos.slot());
-            if (component != null) {
-                component.updateExternalState();
-            }
-        }
-        queuedStateUpdates.clear();
-
-        // Notify all newly added components
-        addedComponents.forEach(ComponentInstance::onAdded);
-        addedComponents.clear();
-
-        // Fire any queued state updates again
-        for (var pos : queuedStateUpdates) {
-            var component = get(pos.pos(), pos.slot());
-            if (component != null) {
-                component.updateExternalState();
-            }
-        }
-        queuedStateUpdates.clear();
-
-        var level = (ServerLevel) firstLevel.get();
-
-        // As long as we have ticks or events queued up
-        while (!updatesThisTick2.isEmpty() || !eventQueues.isEmpty()) {
-            // Copy over the event queues so we don't modify them
-            var eventQueues = this.eventQueues;
-            this.eventQueues = new HashMap<>();
-
-            // Update every component with queued up events
-            eventQueues.forEach((pos, events) -> {
-                var tick = updatesThisTick2.remove(pos);
-                var component = get(pos.pos(), pos.slot());
-                if (component != null) {
-                    component.update(events.build(), tick);
-                }
-            });
-
-            // Update every component with queued up ticks
-            for (var pos : updatesThisTick2) {
-                var component = get(pos.pos(), pos.slot());
-                if (component != null) {
-                    component.update(ComponentEventMap.empty(), true);
-                }
+            var levels = tickLevels.size();
+            var firstLevel = tickLevels.stream().findFirst();
+            tickLevels.clear();
+            // If it's been queued up in multiple levels or has already ticked, skip
+            if (levels != 1) {
+                return;
             }
 
-            // Fire sequential updates
-            for (var pos : queuedSequentialUpdates) {
-                var component = get(pos.pos(), pos.slot());
-                if (component != null) {
-                    component.updateSequential();
-                }
+            var updatesThisTick = queuedTicks.remove(currentTime);
+            if (updatesThisTick == null) {
+                updatesThisTick = Collections.emptySet();
             }
+            final var updatesThisTick2 = updatesThisTick;
 
-            // Fire state updates
+            // Fire any queued state updates ahead of the tick
             for (var pos : queuedStateUpdates) {
                 var component = get(pos.pos(), pos.slot());
                 if (component != null) {
                     component.updateExternalState();
                 }
             }
+            queuedStateUpdates.clear();
 
-            // Remove components
-            for (var pos : queuedRemovals) {
+            // Fire any queued sequential updates ahead of the tick
+            for (var pos : queuedSequentialUpdates) {
                 var component = get(pos.pos(), pos.slot());
                 if (component != null) {
-                    var unpacked = UnpackedPos.of(pos.pos());
-                    var host = tileClaims.get(unpacked.tile());
-                    if (host == null && !tileClaims.isEmpty()) {
-                        host = tileClaims.values().iterator().next();
-                    }
-                    var ctx = host != null ? ComponentHarvestContext.drop(level, host::drop) : ComponentHarvestContext.dummy(level);
-                    component.harvest(ctx);
+                    component.updateSequential();
                 }
             }
-
-            // Clear update lists
-            updatesThisTick.clear();
             queuedSequentialUpdates.clear();
+
+            // Fire any queued state updates ahead of the tick
+            for (var pos : queuedStateUpdates) {
+                var component = get(pos.pos(), pos.slot());
+                if (component != null) {
+                    component.updateExternalState();
+                }
+            }
             queuedStateUpdates.clear();
-            queuedRemovals.clear();
 
-            // Ensure the circuit gets saved
-            setDirty();
+            // Notify all newly added components
+            addedComponents.forEach(ComponentInstance::onAdded);
+            addedComponents.clear();
+
+            // Fire any queued state updates again
+            for (var pos : queuedStateUpdates) {
+                var component = get(pos.pos(), pos.slot());
+                if (component != null) {
+                    component.updateExternalState();
+                }
+            }
+            queuedStateUpdates.clear();
+
+            var level = (ServerLevel) firstLevel.get();
+
+            // As long as we have ticks or events queued up
+            while (!updatesThisTick2.isEmpty() || !eventQueues.isEmpty()) {
+                // Copy over the event queues so we don't modify them
+                var eventQueues = this.eventQueues;
+                this.eventQueues = new HashMap<>();
+
+                // Update every component with queued up events
+                eventQueues.forEach((pos, events) -> {
+                    var tick = updatesThisTick2.remove(pos);
+                    var component = get(pos.pos(), pos.slot());
+                    if (component != null) {
+                        component.update(events.build(), tick);
+                    }
+                });
+
+                // Update every component with queued up ticks
+                for (var pos : updatesThisTick2) {
+                    var component = get(pos.pos(), pos.slot());
+                    if (component != null) {
+                        component.update(ComponentEventMap.empty(), true);
+                    }
+                }
+
+                // Fire sequential updates
+                for (var pos : queuedSequentialUpdates) {
+                    var component = get(pos.pos(), pos.slot());
+                    if (component != null) {
+                        component.updateSequential();
+                    }
+                }
+
+                // Fire state updates
+                for (var pos : queuedStateUpdates) {
+                    var component = get(pos.pos(), pos.slot());
+                    if (component != null) {
+                        component.updateExternalState();
+                    }
+                }
+
+                // Remove components
+                for (var pos : queuedRemovals) {
+                    var component = get(pos.pos(), pos.slot());
+                    if (component != null) {
+                        var unpacked = UnpackedPos.of(pos.pos());
+                        var host = tileClaims.get(unpacked.tile());
+                        if (host == null && !tileClaims.isEmpty()) {
+                            host = tileClaims.values().iterator().next();
+                        }
+                        var ctx = host != null ? ComponentHarvestContext.drop(level, host::drop) : ComponentHarvestContext.dummy(level);
+                        component.harvest(ctx);
+                    }
+                }
+
+                // Clear update lists
+                updatesThisTick.clear();
+                queuedSequentialUpdates.clear();
+                queuedStateUpdates.clear();
+                queuedRemovals.clear();
+
+                // Ensure the circuit gets saved
+                setDirty();
+            }
+
+            // Sync tiles
+            queuedTileSyncs.forEach(this::sendTile);
+            queuedTileSyncs.clear();
+
+            // Recalculate world outputs
+            queuedOutputs.forEach((pos, sides) -> {
+                var tile = getTile(pos);
+                if (tile == null) {
+                    return; // Something has gone wrong here
+                }
+                var host = getOrScoutHost(pos);
+                if (host == null) {
+                    return; // Something has gone wrong here
+                }
+
+                for (var side : sides) {
+                    var output = tile.calculateOutput(side);
+                    host.setOutput(side, output);
+                }
+            });
+            queuedOutputs.clear();
+
+            // Increase the tick counter
+            currentTime++;
+        } finally {
+            ticking = false;
         }
-
-        // Sync tiles
-        queuedTileSyncs.forEach(this::sendTile);
-        queuedTileSyncs.clear();
-
-        // Recalculate world outputs
-        queuedOutputs.forEach((pos, sides) -> {
-            var tile = getTile(pos);
-            if (tile == null) {
-                return; // Something has gone wrong here
-            }
-            var host = getOrScoutHost(pos);
-            if (host == null) {
-                return; // Something has gone wrong here
-            }
-
-            for (var side : sides) {
-                var output = tile.calculateOutput(side);
-                host.setOutput(side, output);
-            }
-        });
-        queuedOutputs.clear();
-
-        // Increase the tick counter
-        currentTime++;
     }
 
     // Serialization
