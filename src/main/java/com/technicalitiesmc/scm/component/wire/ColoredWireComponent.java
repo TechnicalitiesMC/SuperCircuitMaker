@@ -42,6 +42,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             .with(RedstoneSink.class, ColoredWireComponent::getRedstoneSink)
             .with(Wire.class, c -> c)
             .with(RedstoneWire.class, c -> c)
+            .with(BundledWire.class, VecDirectionFlags.verticals(), ColoredWireComponent::getBundledWire)
             .build();
 
     // Internal state
@@ -217,6 +218,21 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             return null;
         }
         return RedstoneSink.instance();
+    }
+
+    private BundledWire getBundledWire(VecDirection side) {
+        if (getState(side.getOpposite()) != WireConnectionState.WIRE) {
+            return null;
+        }
+        var neighbor = findConnectionTarget(side.getOpposite());
+        if (neighbor == null) {
+            return null;
+        }
+        var neighborBundled = neighbor.getInterface(side, BundledWire.class);
+        if (neighborBundled == null) {
+            return null;
+        }
+        return color -> color == this.color ? conductor : neighborBundled.getConductor(color);
     }
 
     public static void createState(ComponentStateBuilder builder) {
