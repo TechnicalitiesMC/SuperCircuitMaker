@@ -10,6 +10,7 @@ import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
 import com.technicalitiesmc.scm.network.PickPaletteColorPacket;
 import com.technicalitiesmc.scm.network.SCMNetworkHandler;
@@ -315,7 +316,7 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         @Override
         public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
             var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && Utils.getDyeColor(stack) != null) {
+            if (!stack.isEmpty() && (stack.is(SCMItemTags.ROTATES_COMPONENTS) || Utils.getDyeColor(stack) != null)) {
                 return InteractionResult.sidedSuccess(true);
             }
             return super.use(state, player, hand, sideHit, hit);
