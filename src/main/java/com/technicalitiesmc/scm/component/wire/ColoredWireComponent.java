@@ -147,7 +147,11 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
         }
         // If not, check if it's a bundled wire
         var wire = neighbor.getInterface(side.getOpposite(), BundledWire.class);
-        return wire != null ? wire.getConductor(color).getPower() : 0;
+        if (wire != null) {
+            var conductor = wire.getConductor(color);
+            return conductor != null ? conductor.getPower() : 0;
+        }
+        return 0;
     }
 
     @Override
