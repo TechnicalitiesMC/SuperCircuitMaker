@@ -38,7 +38,7 @@ public class CircuitModel implements IDynamicBakedModel {
 
     private List<BakedQuad> getParentQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
         var renderType = MinecraftForgeClient.getRenderType();
-        if (renderType != RenderType.solid()) {
+        if (renderType != null && renderType != RenderType.solid()) {
             return Collections.emptyList();
         }
 
