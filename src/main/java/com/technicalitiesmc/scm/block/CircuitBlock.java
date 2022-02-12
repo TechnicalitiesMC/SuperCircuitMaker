@@ -243,6 +243,18 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         return MergedShape.of(baseShape, shapes);
     }
 
+    @Override
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        var data = this.data.at(level, pos, state);
+        if (data != null) {
+            var accessor = data.getOrCreateAccessor();
+            if (accessor != null && !accessor.isAreaEmpty() && !player.isCrouching()) {
+                return 0;
+            }
+        }
+        return super.getDestroyProgress(state, player, level, pos);
+    }
+
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock()) && !level.isClientSide() && !moving) {
             var data = this.data.at(level, pos, state);
