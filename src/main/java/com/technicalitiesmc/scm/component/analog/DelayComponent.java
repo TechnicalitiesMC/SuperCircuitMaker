@@ -1,4 +1,4 @@
-package com.technicalitiesmc.scm.component.digital;
+package com.technicalitiesmc.scm.component.analog;
 
 import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
@@ -8,6 +8,7 @@ import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.value.Reference;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.component.CircuitComponentBase;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItems;
@@ -27,7 +28,10 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.Arrays;
 
-public class DelayComponent extends DigitalComponentBase<DelayComponent> {
+public class DelayComponent extends CircuitComponentBase<DelayComponent> {
+
+    public static final VecDirectionFlags INPUT_SIDES = VecDirectionFlags.horizontals().and(VecDirection.NEG_Y);
+    private static final VecDirectionFlags OUTPUT_SIDES = VecDirectionFlags.horizontals();
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 6 / 16D, 1);
 
@@ -37,11 +41,9 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
 
     private static final Property<Boolean> PROP_ON = BooleanProperty.create("on");
 
-    private static final VecDirectionFlags OUTPUT_SIDES = VecDirectionFlags.horizontals();
-
     private static final InterfaceLookup<DelayComponent> INTERFACES = InterfaceLookup.<DelayComponent>builder()
             .with(RedstoneSource.class, OUTPUT_SIDES, DelayComponent::getRedstoneSource)
-            .with(RedstoneSink.class, DigitalComponentBase.DEFAULT_INPUT_SIDES, RedstoneSink::instance)
+            .with(RedstoneSink.class, INPUT_SIDES, RedstoneSink::instance)
             .build();
 
     // Internal state
@@ -104,10 +106,10 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
     }
 
     @Override
-    protected boolean beforeCheckInputs(ComponentEventMap events, boolean tick) {
-        // If we're running a scheduled tick, capture value and advance
+    public void update(ComponentEventMap events, boolean tick) {
+        // If we're running a scheduled tick, capture value
         if (tick) {
-            values[counter] = next;
+            values[counter] = getInput();
             var nextIndex = getNextIndex();
             updateExternalState(true, () -> {
                 counter = nextIndex;
@@ -115,12 +117,12 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
             sendEvent(CircuitEvent.REDSTONE, OUTPUT_SIDES);
             scheduleTick(1);
         }
-        return true;
     }
 
-    @Override
-    protected void onNewInputs(boolean tick, byte newInputs) {
-        next = newInputs != 0 ? 255 : 0; // TODO: make analog component
+    private int getInput() {
+        return INPUT_SIDES.stream(VecDirection.class)
+                .mapToInt(this::getWeakInput)
+                .max().orElse(0);
     }
 
     @Override
@@ -156,7 +158,7 @@ public class DelayComponent extends DigitalComponentBase<DelayComponent> {
     // Helpers
 
     private RedstoneSource getRedstoneSource() {
-        return values[getNextIndex()] != 0 ? RedstoneSource.fullWeak() : RedstoneSource.off();
+        return RedstoneSource.of(0, values[getNextIndex()]);
     }
 
     public static void createState(StateDefinition.Builder<ComponentType, ComponentState> builder) {

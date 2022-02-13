@@ -4,6 +4,7 @@ import com.technicalitiesmc.lib.circuit.component.ClientComponent;
 import com.technicalitiesmc.lib.circuit.component.ComponentSlot;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.component.analog.DelayComponent;
 import com.technicalitiesmc.scm.component.digital.*;
 import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
 import com.technicalitiesmc.scm.component.misc.PlatformComponent;
