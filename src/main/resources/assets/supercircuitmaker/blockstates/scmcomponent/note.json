@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "instrument=harp": {
+      "model": "supercircuitmaker:component/note_harp"
+    },
+    "instrument=basedrum": {
+      "model": "supercircuitmaker:component/note_basedrum"
+    },
+    "instrument=snare": {
+      "model": "supercircuitmaker:component/note_snare"
+    },
+    "instrument=hat": {
+      "model": "supercircuitmaker:component/note_hat"
+    },
+    "instrument=bass": {
+      "model": "supercircuitmaker:component/note_bass"
+    },
+    "instrument=flute": {
+      "model": "supercircuitmaker:component/note_flute"
+    },
+    "instrument=bell": {
+      "model": "supercircuitmaker:component/note_bell"
+    },
+    "instrument=guitar": {
+      "model": "supercircuitmaker:component/note_guitar"
+    },
+    "instrument=chime": {
+      "model": "supercircuitmaker:component/note_chime"
+    },
+    "instrument=xylophone": {
+      "model": "supercircuitmaker:component/note_xylophone"
+    },
+    "instrument=iron_xylophone": {
+      "model": "supercircuitmaker:component/note_iron_xylophone"
+    },
+    "instrument=cow_bell": {
+      "model": "supercircuitmaker:component/note_cow_bell"
+    },
+    "instrument=didgeridoo": {
+      "model": "supercircuitmaker:component/note_didgeridoo"
+    },
+    "instrument=bit": {
+      "model": "supercircuitmaker:component/note_bit"
+    },
+    "instrument=banjo": {
+      "model": "supercircuitmaker:component/note_banjo"
+    },
+    "instrument=pling": {
+      "model": "supercircuitmaker:component/note_pling"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:component/_note",
+  "textures": {
+    "base": "minecraft:block/glowstone"
+  }
+}

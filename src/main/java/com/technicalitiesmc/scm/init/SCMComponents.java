@@ -48,6 +48,11 @@ public final class SCMComponents {
             new PulsarComponent.Client(),
             ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
     );
+    public static final RegistryObject<ComponentType> NOTE = register(
+            "note", NoteComponent::new, NoteComponent::createState,
+            new NoteComponent.Client(),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
+    );
 
     public static final RegistryObject<ComponentType> LAMP = register(
             "lamp", LampComponent::new, LampComponent::createState,

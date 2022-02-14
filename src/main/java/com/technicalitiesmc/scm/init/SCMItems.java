@@ -89,6 +89,9 @@ public final class SCMItems {
     public static final RegistryObject<Item> PULSAR = register("pulsar", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.PULSAR, false, true));
     });
+    public static final RegistryObject<Item> NOTE = register("note", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.NOTE, false, true));
+    });
 
     public static final RegistryObject<Item> LAMP = register("lamp", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.LAMP, false, true));

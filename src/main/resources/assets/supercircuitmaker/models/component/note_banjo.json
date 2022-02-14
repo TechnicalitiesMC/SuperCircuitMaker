@@ -1,0 +1,6 @@
+{
+  "parent": "supercircuitmaker:component/_note",
+  "textures": {
+    "base": "minecraft:block/hay_block_side"
+  }
+}
