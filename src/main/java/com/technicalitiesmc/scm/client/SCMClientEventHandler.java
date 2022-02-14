@@ -9,7 +9,6 @@ import com.technicalitiesmc.scm.item.PaletteItem;
 import com.technicalitiesmc.scm.placement.ComponentPlacementHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
@@ -139,7 +138,7 @@ public class SCMClientEventHandler {
         if (mc.player == null) {
             return;
         }
-        if (Screen.hasAltDown() && mc.screen == null) {
+        if (SCMKeyMappings.OPEN_PALETTE.isDown() && mc.screen == null) {
             var stack = mc.player.getMainHandItem();
             if (!stack.isEmpty() && stack.is(SCMItems.PALETTE.get())) {
                 mc.setScreen(new PaletteScreen(PaletteItem.getColor(stack)));

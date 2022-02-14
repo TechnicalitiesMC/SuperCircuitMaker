@@ -9,11 +9,11 @@ import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.scm.block.CircuitBlock;
 import com.technicalitiesmc.scm.circuit.client.ClientTile;
+import com.technicalitiesmc.scm.client.SCMKeyMappings;
 import com.technicalitiesmc.scm.client.model.CircuitModel;
 import com.technicalitiesmc.scm.network.ComponentPlacePacket;
 import com.technicalitiesmc.scm.network.SCMNetworkHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -31,7 +31,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 
 import javax.annotation.Nullable;
-
 import java.util.Random;
 
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.HEIGHT;
@@ -218,7 +217,7 @@ public class ComponentPlacementHandler {
 
         @Override
         public boolean isModifierPressed() {
-            return Screen.hasControlDown(); // TODO: replace with keybind
+            return SCMKeyMappings.COMPONENT_PLACEMENT_MODIFIER.isDown();
         }
 
 

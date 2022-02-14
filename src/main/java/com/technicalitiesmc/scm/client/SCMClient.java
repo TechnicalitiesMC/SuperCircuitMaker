@@ -49,6 +49,7 @@ public class SCMClient {
     public static void setup(final FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             registerScreens();
+            SCMKeyMappings.register();
         });
     }
 

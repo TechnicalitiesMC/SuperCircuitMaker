@@ -30,6 +30,10 @@
 
   "subtitles.supercircuitmaker.place": "BOOP",
 
+  "key.supercircuitmaker": "Super Circuit Maker",
+  "key.supercircuitmaker.open_palette": "Open Palette",
+  "key.supercircuitmaker.component_placement_modifier": "Component Placement Modifier",
+
   "msg.supercircuitmaker.inspector.learned": "Learned!",
   "msg.supercircuitmaker.inspector.mode_state": "Selected mode: Match block state",
   "msg.supercircuitmaker.inspector.mode_block": "Selected mode: Match block type"

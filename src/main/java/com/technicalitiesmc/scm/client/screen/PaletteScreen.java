@@ -1,7 +1,9 @@
 package com.technicalitiesmc.scm.client.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.client.SCMKeyMappings;
 import com.technicalitiesmc.scm.network.PickPaletteColorPacket;
 import com.technicalitiesmc.scm.network.SCMNetworkHandler;
 import net.minecraft.client.gui.screens.Screen;
@@ -36,7 +38,8 @@ public class PaletteScreen extends Screen {
 
     @Override
     public void tick() {
-        if (!hasAltDown()) {
+        if (SCMKeyMappings.OPEN_PALETTE.getKey().getType() == InputConstants.Type.KEYSYM &&
+                !InputConstants.isKeyDown(minecraft.getWindow().getWindow(), SCMKeyMappings.OPEN_PALETTE.getKey().getValue())) {
             onClose();
         }
     }
