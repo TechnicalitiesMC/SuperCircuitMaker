@@ -18,10 +18,12 @@ public class PaletteScreen extends Screen {
     private static final int UNSELECTED_SHRINK = 2;
     public static final int TOTAL_SIZE = 3 * GRID_SIZE + SQUARE_SIZE;
 
+    private DyeColor originalColor;
     private DyeColor color;
 
     public PaletteScreen(DyeColor defaultColor) {
         super(new TranslatableComponent(TITLE));
+        this.originalColor = defaultColor;
         this.color = defaultColor;
     }
 
@@ -56,6 +58,11 @@ public class PaletteScreen extends Screen {
     public void mouseMoved(double mouseX, double mouseY) {
         var x0 = (width - TOTAL_SIZE) / 2;
         var y0 = (height - TOTAL_SIZE) / 2;
+
+        if (mouseX < x0 - 8 || mouseX >= x0 + TOTAL_SIZE + 8 || mouseY < y0 - 8 || mouseY >= y0 + TOTAL_SIZE + 8) {
+            color = originalColor;
+            return;
+        }
 
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
