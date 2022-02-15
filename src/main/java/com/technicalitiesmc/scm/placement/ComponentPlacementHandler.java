@@ -46,11 +46,12 @@ public class ComponentPlacementHandler {
     });
 
     public static InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, LocalPlayer player, InteractionHand hand, BlockHitResult hit) {
+        var data = player.getCapability(PLAYER_PLACEMENT_DATA_CAPABILITY).orElse(null);
         var hitPos = CircuitBlock.resolveHit(hit);
         if (hitPos == null) {
+            data.reset();
             return InteractionResult.PASS;
         }
-        var data = player.getCapability(PLAYER_PLACEMENT_DATA_CAPABILITY).orElse(null);
 
         var placement = data.getPlacement();
         var context = data.getContext();

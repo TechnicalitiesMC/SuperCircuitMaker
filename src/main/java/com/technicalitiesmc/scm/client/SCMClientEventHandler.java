@@ -91,25 +91,23 @@ public class SCMClientEventHandler {
             return;
         }
         var minecraft = Minecraft.getInstance();
-        if (minecraft.level == null || minecraft.player == null || !(minecraft.hitResult instanceof BlockHitResult hit)) {
+        if (minecraft.level == null || minecraft.player == null) {
             return;
         }
-        var state = Utils.resolveHit(minecraft.level, hit);
-        if (!(state.getBlock() instanceof CircuitBlock)) {
-            return;
+        if (minecraft.hitResult instanceof BlockHitResult hit) {
+            var state = Utils.resolveHit(minecraft.level, hit);
+            if (state.getBlock() instanceof CircuitBlock && partialMapping.isDown()) {
+                var result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, partialHand, hit);
+                if (result != InteractionResult.CONSUME_PARTIAL) {
+                    partial = false;
+                    busyTimer = 5;
+                }
+                return;
+            }
         }
-
-        if (partialMapping.isDown()) {
-            var result = ComponentPlacementHandler.onClientUse(state, minecraft.level, hit.getBlockPos(), minecraft.player, partialHand, hit);
-            if (result != InteractionResult.CONSUME_PARTIAL) {
-                partial = false;
-                busyTimer = 5;
-            }
-        } else {
-            if (ComponentPlacementHandler.onClientStopUsing(minecraft.level, minecraft.player) || busyTimer > 0) {
-                partial = false;
-                busyTimer = 2;
-            }
+        if (ComponentPlacementHandler.onClientStopUsing(minecraft.level, minecraft.player) || busyTimer > 0) {
+            partial = false;
+            busyTimer = 2;
         }
     }
 
