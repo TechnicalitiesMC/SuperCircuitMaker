@@ -5,6 +5,7 @@ import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.util.Utils;
+import com.technicalitiesmc.lib.circuit.interfaces.DyeableComponent;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
 import com.technicalitiesmc.scm.init.SCMItems;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 
-public class LampComponent extends DigitalComponentBase<LampComponent> {
+public class LampComponent extends DigitalComponentBase<LampComponent> implements DyeableComponent {
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 6 / 16D, 1);
 
@@ -63,6 +64,13 @@ public class LampComponent extends DigitalComponentBase<LampComponent> {
     @Override
     public ItemStack getPickedItem() {
         return new ItemStack(SCMItems.LAMP.get());
+    }
+
+    @Override
+    public void setColor(DyeColor color) {
+        updateExternalState(true, () -> {
+            this.color = color;
+        });
     }
 
     @Override

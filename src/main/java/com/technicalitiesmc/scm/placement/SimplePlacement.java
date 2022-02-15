@@ -3,6 +3,8 @@ package com.technicalitiesmc.scm.placement;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.math.VecDirection;
+import com.technicalitiesmc.lib.util.Utils;
+import com.technicalitiesmc.lib.circuit.interfaces.DyeableComponent;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.RegistryObject;
@@ -41,13 +43,25 @@ public class SimplePlacement extends SinglePlacement<SimplePlacement.State> {
 
     @Override
     protected void put(PlacementContext.Server context, State state) {
-        if (context.tryPut(state.pos(), type.get())) {
+        if (context.tryPut(state.pos(), type.get(), ctx -> {
+            var component = type.get().create(ctx);
+            if (component instanceof DyeableComponent c) {
+                var offHandItem = context.getPlayer().getOffhandItem();
+                if (!offHandItem.isEmpty()) {
+                    var color = Utils.getDyeColor(offHandItem);
+                    if (color != null) {
+                        c.setColor(color);
+                    }
+                }
+            }
+            return component;
+        })) {
             context.consumeItems(1);
             context.playSound();
         }
     }
 
-    public static record State(Vec3i pos) {
+    public record State(Vec3i pos) {
 
         public void serialize(FriendlyByteBuf buf) {
             buf.writeInt(pos().getX()).writeInt(pos().getY()).writeInt(pos().getZ());
