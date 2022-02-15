@@ -17,10 +17,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WirePlacement implements ComponentPlacement {
 
@@ -54,6 +51,7 @@ public class WirePlacement implements ComponentPlacement {
 
     private class Instance implements ComponentPlacement.Instance {
 
+        private final Set<Vec3i> uniquePositions = new HashSet<>();
         private final List<Vec3i> positions = new ArrayList<>();
         private final List<VecDirectionFlags> connections = new ArrayList<>();
         private final Map<Vec3i, VecDirectionFlags> connectionMap = new HashMap<>();
@@ -81,11 +79,18 @@ public class WirePlacement implements ComponentPlacement {
                     var start = Math.max(0, idx + 1);
                     positions.subList(start, positions.size()).clear();
                     connections.subList(start, connections.size()).clear();
+                    uniquePositions.clear();
+                    uniquePositions.addAll(positions);
                     return true;
                 }
             }
 
+            if (context.getPlayer().isCreative() || uniquePositions.size() >= context.getStack().getCount()) {
+                return true;
+            }
+
             // If we are on a new position or too far from the last hit, add it to the history
+            uniquePositions.add(pos);
             positions.add(pos);
             connections.add(computeConnections(context, pos));
             return true;
