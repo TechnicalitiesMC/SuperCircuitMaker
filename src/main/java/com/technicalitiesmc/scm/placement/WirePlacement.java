@@ -96,6 +96,9 @@ public class WirePlacement implements ComponentPlacement {
             if (prevPos == null) {
                 return VecDirectionFlags.none();
             }
+            if (prevPos.distManhattan(pos) != 1) {
+                return VecDirectionFlags.none();
+            }
             var sideFrom = VecDirection.getNearest(prevPos.subtract(pos));
             if (sideFrom.getAxis() == Direction.Axis.Y) {
                 return VecDirectionFlags.none();
