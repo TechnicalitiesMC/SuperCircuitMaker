@@ -29,7 +29,8 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
 
     private static final AABB BOUNDS = new AABB(0, 0, 0, 1, 4 / 16D, 1);
 
-    private static final Property<VecDirection> PROP_DIRECTION = EnumProperty.create("direction", VecDirection.class);
+    private static final Property<VecDirection> PROP_DIRECTION = EnumProperty.create("direction", VecDirection.class,
+            VecDirection.NEG_X, VecDirection.POS_X, VecDirection.NEG_Z, VecDirection.POS_Z);
 
     private static final InterfaceLookup<OperatorComponentBase> INTERFACES = InterfaceLookup.<OperatorComponentBase>builder()
             .with(RedstoneSource.class, OUTPUT_SIDES, OperatorComponentBase::getRedstoneSource)
