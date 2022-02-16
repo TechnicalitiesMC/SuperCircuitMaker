@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RNR",
+    "RDR"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "N": { "item": "minecraft:note_block" },
+    "D": { "item": "minecraft:deepslate" }
+  },
+  "result": {
+    "item": "supercircuitmaker:note",
+    "count": 4
+  }
+}
