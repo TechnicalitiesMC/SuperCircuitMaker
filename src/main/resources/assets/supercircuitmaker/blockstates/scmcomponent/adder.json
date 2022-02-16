@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "direction=neg_x": { "model": "supercircuitmaker:component/adder" },
+    "direction=pos_x": { "model": "supercircuitmaker:component/adder", "y": 180 },
+    "direction=neg_z": { "model": "supercircuitmaker:component/adder", "y": 90 },
+    "direction=pos_z": { "model": "supercircuitmaker:component/adder", "y": 270 }
+  }
+}

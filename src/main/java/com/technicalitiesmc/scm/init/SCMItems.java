@@ -101,6 +101,19 @@ public final class SCMItems {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.BUTTON, false, true));
     });
 
+    public static final RegistryObject<Item> ADDER = register("adder", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.ADDER, false, true));
+    });
+    public static final RegistryObject<Item> SUBTRACTOR = register("subtractor", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.SUBTRACTOR, false, true));
+    });
+    public static final RegistryObject<Item> MULTIPLIER = register("multiplier", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.MULTIPLIER, false, true));
+    });
+    public static final RegistryObject<Item> DIVIDER = register("divider", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.DIVIDER, false, true));
+    });
+
     public static final RegistryObject<Item> PLATFORM = register("platform", () -> {
         return new SimpleComponentItem(new NoTopLayerSimplePlacement(SCMComponents.PLATFORM, true, false));
     });

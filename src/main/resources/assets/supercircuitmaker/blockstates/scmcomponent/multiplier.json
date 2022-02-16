@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "direction=neg_x": { "model": "supercircuitmaker:component/multiplier" },
+    "direction=pos_x": { "model": "supercircuitmaker:component/multiplier", "y": 180 },
+    "direction=neg_z": { "model": "supercircuitmaker:component/multiplier", "y": 90 },
+    "direction=pos_z": { "model": "supercircuitmaker:component/multiplier", "y": 270 }
+  }
+}

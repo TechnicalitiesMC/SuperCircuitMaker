@@ -4,7 +4,7 @@ import com.technicalitiesmc.lib.circuit.component.ClientComponent;
 import com.technicalitiesmc.lib.circuit.component.ComponentSlot;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
-import com.technicalitiesmc.scm.component.analog.DelayComponent;
+import com.technicalitiesmc.scm.component.analog.*;
 import com.technicalitiesmc.scm.component.digital.*;
 import com.technicalitiesmc.scm.component.misc.LevelIOComponent;
 import com.technicalitiesmc.scm.component.misc.PlatformComponent;
@@ -75,6 +75,27 @@ public final class SCMComponents {
             "platform", PlatformComponent::new, PlatformComponent::createState,
             new PlatformComponent.Client(),
             ComponentSlot.SUPPORT
+    );
+
+    public static final RegistryObject<ComponentType> ADDER = register(
+            "adder", AdderComponent::new, AdderComponent::createState,
+            new OperatorComponentBase.Client(SCMItems.ADDER),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
+    );
+    public static final RegistryObject<ComponentType> SUBTRACTOR = register(
+            "subtractor", SubtractorComponent::new, SubtractorComponent::createState,
+            new OperatorComponentBase.Client(SCMItems.SUBTRACTOR),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
+    );
+    public static final RegistryObject<ComponentType> MULTIPLIER = register(
+            "multiplier", MultiplierComponent::new, MultiplierComponent::createState,
+            new OperatorComponentBase.Client(SCMItems.MULTIPLIER),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
+    );
+    public static final RegistryObject<ComponentType> DIVIDER = register(
+            "divider", DividerComponent::new, DividerComponent::createState,
+            new OperatorComponentBase.Client(SCMItems.DIVIDER),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
     );
 
     public static final RegistryObject<ComponentType> REDSTONE_WIRE = register(

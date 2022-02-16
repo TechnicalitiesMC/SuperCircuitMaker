@@ -1,0 +1,7 @@
+{
+  "parent": "supercircuitmaker:component/_operator",
+  "textures": {
+    "base": "supercircuitmaker:component/multiplier",
+    "particle": "supercircuitmaker:component/multiplier"
+  }
+}
