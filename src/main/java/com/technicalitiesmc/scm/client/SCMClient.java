@@ -6,6 +6,7 @@ import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.lib.client.circuit.ComponentRenderTypes;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
 import com.technicalitiesmc.scm.client.model.CircuitModel;
+import com.technicalitiesmc.scm.client.screen.ConstantScreen;
 import com.technicalitiesmc.scm.client.screen.TimingScreen;
 import com.technicalitiesmc.scm.init.SCMBlocks;
 import com.technicalitiesmc.scm.init.SCMComponents;
@@ -56,6 +57,7 @@ public class SCMClient {
     private static void registerScreens() {
         MenuScreens.register(SCMMenus.DELAY.get(), TimingScreen::new);
         MenuScreens.register(SCMMenus.PULSAR.get(), TimingScreen::new);
+        MenuScreens.register(SCMMenus.CONSTANT.get(), ConstantScreen::new);
     }
 
     @SubscribeEvent

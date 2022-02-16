@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PRP",
+    "RTR",
+    "PRP"
+  ],
+  "key": {
+    "R": { "item": "supercircuitmaker:tiny_redstone" },
+    "P": { "item": "supercircuitmaker:platform" },
+    "T": { "item": "minecraft:redstone_torch" }
+  },
+  "result": {
+    "item": "supercircuitmaker:constant",
+    "count": 4
+  }
+}

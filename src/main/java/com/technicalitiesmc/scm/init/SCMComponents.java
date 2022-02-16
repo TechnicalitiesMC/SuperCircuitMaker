@@ -97,6 +97,11 @@ public final class SCMComponents {
             new OperatorComponentBase.Client(SCMItems.DIVIDER),
             ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
     );
+    public static final RegistryObject<ComponentType> CONSTANT = register(
+            "constant", ConstantComponent::new,
+            new OperatorComponentBase.Client(SCMItems.CONSTANT),
+            ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
+    );
 
     public static final RegistryObject<ComponentType> REDSTONE_WIRE = register(
             "redstone_wire", ColoredWireComponent::new, ColoredWireComponent::createState,

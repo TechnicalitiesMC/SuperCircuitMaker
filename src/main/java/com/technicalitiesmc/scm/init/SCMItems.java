@@ -113,6 +113,9 @@ public final class SCMItems {
     public static final RegistryObject<Item> DIVIDER = register("divider", () -> {
         return new SimpleComponentItem(new SimplePlacement(SCMComponents.DIVIDER, false, true));
     });
+    public static final RegistryObject<Item> CONSTANT = register("constant", () -> {
+        return new SimpleComponentItem(new SimplePlacement(SCMComponents.CONSTANT, false, true));
+    });
 
     public static final RegistryObject<Item> PLATFORM = register("platform", () -> {
         return new SimpleComponentItem(new NoTopLayerSimplePlacement(SCMComponents.PLATFORM, true, false));

@@ -12,6 +12,7 @@
     "supercircuitmaker:subtractor",
     "supercircuitmaker:multiplier",
     "supercircuitmaker:divider",
+    "supercircuitmaker:constant",
     "supercircuitmaker:platform",
     "supercircuitmaker:redstone_stick",
     "supercircuitmaker:rgb_redstone_stick",

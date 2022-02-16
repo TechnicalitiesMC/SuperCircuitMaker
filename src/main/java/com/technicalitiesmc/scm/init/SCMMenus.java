@@ -1,6 +1,7 @@
 package com.technicalitiesmc.scm.init;
 
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.menu.ConstantMenu;
 import com.technicalitiesmc.scm.menu.DelayMenu;
 import com.technicalitiesmc.scm.menu.PulsarMenu;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -15,6 +16,7 @@ public class SCMMenus {
 
     public static final RegistryObject<MenuType<DelayMenu>> DELAY = register("delay", DelayMenu::new);
     public static final RegistryObject<MenuType<PulsarMenu>> PULSAR = register("pulsar", PulsarMenu::new);
+    public static final RegistryObject<MenuType<ConstantMenu>> CONSTANT = register("constant", ConstantMenu::new);
 
     // Helpers
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String name, MenuType.MenuSupplier<T> factory) {
