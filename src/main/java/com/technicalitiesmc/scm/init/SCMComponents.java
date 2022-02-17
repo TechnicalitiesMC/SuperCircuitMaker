@@ -99,7 +99,7 @@ public final class SCMComponents {
     );
     public static final RegistryObject<ComponentType> CONSTANT = register(
             "constant", ConstantComponent::new,
-            new OperatorComponentBase.Client(SCMItems.CONSTANT),
+            new ConstantComponent.Client(),
             ComponentSlot.DEFAULT, ComponentSlot.OVERLAY
     );
 
