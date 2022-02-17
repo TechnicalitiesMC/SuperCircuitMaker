@@ -118,12 +118,12 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
     // Helpers
 
     private int getMainInput() {
-        return getWeakInput(direction);
+        return getStrongInput(direction);
     }
 
     private int getSecondaryInput() {
         return INPUT_SIDES.except(direction).stream(VecDirection.class)
-                .mapToInt(this::getWeakInput)
+                .mapToInt(this::getStrongInput)
                 .max().orElse(0);
     }
 
