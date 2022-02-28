@@ -64,11 +64,6 @@ public class TorchBottomComponent extends DigitalComponentBase<TorchBottomCompon
     }
 
     @Override
-    protected boolean needsSupport() {
-        return true;
-    }
-
-    @Override
     protected boolean beforeCheckInputs(ComponentEventMap events, boolean tick) {
         // If we're running a scheduled tick, try to update the state and notify neighbors
         if (tick) {

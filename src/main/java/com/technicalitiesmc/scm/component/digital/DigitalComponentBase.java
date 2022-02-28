@@ -24,7 +24,7 @@ public abstract class DigitalComponentBase<T extends DigitalComponentBase<T>> ex
     }
 
     protected boolean needsSupport() {
-        return false;
+        return true;
     }
 
     protected final byte getInputs() {

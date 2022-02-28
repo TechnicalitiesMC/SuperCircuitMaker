@@ -59,11 +59,6 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
         this.state = state;
     }
 
-    @Override
-    protected boolean needsSupport() {
-        return true;
-    }
-
     private int getRotation() {
         return (state ? 2 : 0) + (rotation ? 1 : 0);
     }

@@ -69,6 +69,11 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
 
     @Override
     public void update(ComponentEventMap events, boolean tick) {
+        // If the support component below is gone, remove this and skip the update
+        if (!ensureSupported(events)) {
+            return;
+        }
+
         // If we're running a scheduled tick, capture value
         if (tick) {
             var newValues = operate(getMainInput(), getSecondaryInput());

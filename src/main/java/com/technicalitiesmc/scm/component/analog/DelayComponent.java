@@ -107,6 +107,11 @@ public class DelayComponent extends CircuitComponentBase<DelayComponent> {
 
     @Override
     public void update(ComponentEventMap events, boolean tick) {
+        // If the support component below is gone, remove this and skip the update
+        if (!ensureSupported(events)) {
+            return;
+        }
+
         // If we're running a scheduled tick, capture value
         if (tick) {
             values[counter] = getInput();
