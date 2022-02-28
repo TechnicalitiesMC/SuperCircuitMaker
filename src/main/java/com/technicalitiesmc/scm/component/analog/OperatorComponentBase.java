@@ -93,6 +93,8 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
             updateExternalState(true, () -> {
                 direction = newDirection;
             });
+            sendEvent(CircuitEvent.NEIGHBOR_CHANGED, OUTPUT_SIDES);
+            scheduleTick(1);
             return InteractionResult.sidedSuccess(false);
         }
         return super.use(player, hand, sideHit, hit);
