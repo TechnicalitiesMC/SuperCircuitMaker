@@ -5,6 +5,7 @@ import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
 import com.technicalitiesmc.lib.client.circuit.ComponentRenderTypes;
 import com.technicalitiesmc.scm.SuperCircuitMaker;
+import com.technicalitiesmc.scm.block.FakeBlock;
 import com.technicalitiesmc.scm.client.model.CircuitModel;
 import com.technicalitiesmc.scm.client.screen.ConstantScreen;
 import com.technicalitiesmc.scm.client.screen.TimingScreen;
@@ -20,10 +21,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -73,7 +71,7 @@ public class SCMClient {
         for (var componentType : componentTypes) {
             var name = componentType.getRegistryName();
             var modelName = new ResourceLocation(name.getNamespace(), "scmcomponent/" + name.getPath());
-            var fakeBlock = new AirBlock(BlockBehaviour.Properties.copy(Blocks.AIR)) {
+            var fakeBlock = new FakeBlock() {
                 @Override
                 protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
                     componentType.getStateDefinition().getProperties().forEach(builder::add);
