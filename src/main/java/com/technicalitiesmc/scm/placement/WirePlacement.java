@@ -85,6 +85,10 @@ public class WirePlacement implements ComponentPlacement {
                 }
             }
 
+            if (!positions.isEmpty() && positions.get(positions.size() - 1).distManhattan(pos) > 1) {
+                return true;
+            }
+
             if (!context.getPlayer().isCreative() && uniquePositions.size() >= context.getStack().getCount()) {
                 return true;
             }
