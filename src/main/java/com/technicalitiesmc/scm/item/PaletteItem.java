@@ -29,4 +29,9 @@ public class PaletteItem extends TKItem {
         stack.getOrCreateTag().putInt("color", color.getId());
     }
 
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return false;
+    }
+
 }
