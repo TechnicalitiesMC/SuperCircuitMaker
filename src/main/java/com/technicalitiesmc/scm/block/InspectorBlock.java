@@ -31,7 +31,6 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
 import java.util.Random;
-import java.util.UUID;
 
 /*
  * Basically copy-pasted from the observer block.
@@ -167,10 +166,10 @@ public class InspectorBlock extends TKBlock.WithEntity {
                     var neighborState = level.getBlockState(pos.relative(state.getValue(FACING)));
                     if (data.matchedState != neighborState) {
                         data.setMatchedState(neighborState);
-                        player.sendMessage(new TranslatableComponent(LANG_LEARNED), UUID.randomUUID());
+                        player.displayClientMessage(new TranslatableComponent(LANG_LEARNED), true);
                     } else {
                         data.toggleMode();
-                        player.sendMessage(new TranslatableComponent(data.mode ? LANG_MODE_BLOCK : LANG_MODE_STATE), UUID.randomUUID());
+                        player.displayClientMessage(new TranslatableComponent(data.mode ? LANG_MODE_BLOCK : LANG_MODE_STATE), true);
                     }
                 }
             }
