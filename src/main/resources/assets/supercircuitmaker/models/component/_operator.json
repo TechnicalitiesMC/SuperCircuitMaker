@@ -1,17 +1,19 @@
 {
   "parent": "block/block",
   "textures": {
+    "base": "supercircuitmaker:component/operator_base"
   },
   "elements": [
     {
       "from": [  0,  0,  0 ],
       "to":   [ 16,  4, 16 ],
       "faces": {
-        "up":    { "texture": "#base" },
-        "north": { "texture": "#base" },
-        "south": { "texture": "#base" },
-        "west":  { "texture": "#base" },
-        "east":  { "texture": "#base" }
+        "down":  { "texture": "#base", "cullface": "down" },
+        "up":    { "texture": "#texture"                  },
+        "north": { "texture": "#base"                     },
+        "south": { "texture": "#base"                     },
+        "west":  { "texture": "#base"                     },
+        "east":  { "texture": "#base"                     }
       }
     }
   ]

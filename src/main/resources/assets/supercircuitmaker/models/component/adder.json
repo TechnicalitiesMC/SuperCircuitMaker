@@ -1,7 +1,7 @@
 {
   "parent": "supercircuitmaker:component/_operator",
   "textures": {
-    "base": "supercircuitmaker:component/adder",
+    "texture": "supercircuitmaker:component/adder",
     "particle": "supercircuitmaker:component/adder"
   }
 }
