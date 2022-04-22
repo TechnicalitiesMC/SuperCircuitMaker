@@ -125,6 +125,10 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
     // Helpers
 
     private int getMainInput() {
+        var neighbor = findNeighbor(direction);
+        if (neighbor instanceof OperatorComponentBase || neighbor instanceof ConstantComponent) {
+            return getWeakInput(direction); // Read directly
+        }
         return getStrongInput(direction);
     }
 
