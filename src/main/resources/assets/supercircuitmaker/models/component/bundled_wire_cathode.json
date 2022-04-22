@@ -8,11 +8,11 @@
       "from": [ 0.01,  0,  2 ],
       "to":   [  4,    2, 14 ],
       "faces": {
-        "up":    { "texture": "#wire", "tintindex": 0 },
-        "north": { "texture": "#wire", "tintindex": 0 },
-        "south": { "texture": "#wire", "tintindex": 0 },
-        "west":  { "texture": "#wire", "tintindex": 0 },
-        "east":  { "texture": "#wire", "tintindex": 0 }
+        "up":    { "texture": "#wire" },
+        "north": { "texture": "#wire" },
+        "south": { "texture": "#wire" },
+        "west":  { "texture": "#wire" },
+        "east":  { "texture": "#wire" }
       }
     }
   ]

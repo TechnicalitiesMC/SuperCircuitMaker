@@ -1,11 +1,6 @@
 {
   "multipart": [
     {
-      "apply": {
-        "model": "supercircuitmaker:component/bundled_wire_center"
-      }
-    },
-    {
       "when": { "neg_x": "anode" },
       "apply": {
         "model": "supercircuitmaker:component/bundled_wire_anode_1"
@@ -58,5 +53,15 @@
         "y": 270
       }
     }
-  ]
+  ],
+  "variants": {
+    "neg_x=anode,neg_z=disconnected,pos_x=anode,pos_z=disconnected": {
+      "model": "supercircuitmaker:component/bundled_wire_straight",
+      "y": 90
+    },
+    "neg_x=disconnected,neg_z=anode,pos_x=disconnected,pos_z=anode": {
+      "model": "supercircuitmaker:component/bundled_wire_straight",
+      "y": 180
+    }
+  }
 }

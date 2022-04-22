@@ -10,10 +10,10 @@
       "from": [ 12,  0,  4 ],
       "to":   [ 16,  2, 12 ],
       "faces": {
-        "up":    { "texture": "#wire",  "tintindex": 0 },
-        "north": { "texture": "#side1", "tintindex": 0 },
-        "south": { "texture": "#side2", "tintindex": 0 },
-        "east":  { "texture": "#wire",  "tintindex": 0 }
+        "up":    { "texture": "#wire"  },
+        "north": { "texture": "#side1" },
+        "south": { "texture": "#side2" },
+        "east":  { "texture": "#wire"  }
       }
     }
   ]
