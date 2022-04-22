@@ -1,0 +1,51 @@
+{
+    "itemGroup.supercircuitmaker": "Super Circuit Maker",
+  
+    "block.supercircuitmaker.circuit": "회로",
+    "block.supercircuitmaker.inspector": "검사기",
+    "item.supercircuitmaker.screwdriver": "스크류드라이버",
+    "item.supercircuitmaker.palette": "팔레트와 브러시",
+    "item.supercircuitmaker.tiny_redstone": "작은 레드스톤 가루 더미",
+    "item.supercircuitmaker.tiny_rgb_redstone": "작은 RGB 레드스톤 가루 더미",
+    "item.supercircuitmaker.randomizer": "발광석 익사이터",
+    "item.supercircuitmaker.delay": "석영 공명기",
+    "item.supercircuitmaker.pulsar": "엔더 펄서",
+    "item.supercircuitmaker.note": "삑삑이",
+    "item.supercircuitmaker.lamp": "미니어처 램프",
+    "item.supercircuitmaker.button": "미니어처 버튼",
+    "item.supercircuitmaker.adder": "덧셈기",
+    "item.supercircuitmaker.subtractor": "뺄셈기",
+    "item.supercircuitmaker.multiplier": "곱셈기",
+    "item.supercircuitmaker.divider": "나눗셈기",
+    "item.supercircuitmaker.constant": "상수",
+    "item.supercircuitmaker.platform": "받침 플랫폼",
+    "item.supercircuitmaker.redstone_stick": "레드스톤 코팅 막대",
+    "item.supercircuitmaker.rgb_redstone_stick": "RGB 레드스톤 코팅 막대",
+  
+    "container.supercircuitmaker.delay": "석영 공명기: ",
+    "container.supercircuitmaker.pulsar": "엔더 펄서: ",
+    "container.supercircuitmaker.timing.dec_10s": "-10초",
+    "container.supercircuitmaker.timing.dec_1s": "-1초",
+    "container.supercircuitmaker.timing.inc_1s": "+1초",
+    "container.supercircuitmaker.timing.inc_10s": "+10초",
+    "container.supercircuitmaker.timing.dec_10t": "-10틱",
+    "container.supercircuitmaker.timing.dec_1t": "-1틱",
+    "container.supercircuitmaker.timing.inc_1t": "+1틱",
+    "container.supercircuitmaker.timing.inc_10t": "+10틱",
+  
+    "container.supercircuitmaker.constant": "상수: ",
+    "container.supercircuitmaker.constant.dec_20": "-20",
+    "container.supercircuitmaker.constant.dec_1": "-1",
+    "container.supercircuitmaker.constant.inc_1": "+1",
+    "container.supercircuitmaker.constant.inc_20": "+20",
+  
+    "subtitles.supercircuitmaker.place": "삑",
+  
+    "key.supercircuitmaker": "Super Circuit Maker",
+    "key.supercircuitmaker.open_palette": "팔레트 열기",
+    "key.supercircuitmaker.component_placement_modifier": "구성요소 배치 수정자",
+  
+    "msg.supercircuitmaker.inspector.learned": "배웠음!",
+    "msg.supercircuitmaker.inspector.mode_state": "선택된 모드: 블록 상태 일치",
+    "msg.supercircuitmaker.inspector.mode_block": "선택된 모드: 블록 유형 일치"
+  }
