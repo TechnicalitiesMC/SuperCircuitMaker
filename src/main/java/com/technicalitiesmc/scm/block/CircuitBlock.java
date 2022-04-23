@@ -91,6 +91,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
     public static final Property<Direction> DIRECTION = DirectionProperty.create("face");
 
     public static boolean picking;
+    public static VoxelShape boundingBoxOverride;
 
     private final BlockData<Data> data = addComponent("circuit", ctx -> new BlockData<>(ctx, Data::new));
 
@@ -213,6 +214,9 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (boundingBoxOverride != null) {
+            return boundingBoxOverride;
+        }
         var data = this.data.at(level, pos, state);
         var baseShape = getBaseShape(state);
         if (data == null || data.hideComponents) {
@@ -570,22 +574,22 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
             box(14, 0, 0, 16, 16, 16)
     };
     private static final VoxelShape[] GRIDS = new VoxelShape[]{
-            makeGrid(0, SIZE_MINUS_ONE, 0, SIZE_MINUS_ONE), // Center
-            makeGrid(-1, 0, 0, SIZE_MINUS_ONE), // Negative x
-            makeGrid(SIZE_MINUS_ONE, SIZE, 0, SIZE_MINUS_ONE), // Positive x
-            makeGrid(0, SIZE_MINUS_ONE, -1, 0), // Negative z
-            makeGrid(0, SIZE_MINUS_ONE, SIZE_MINUS_ONE, SIZE), // Positive z
-            makeGrid(-1, 0, -1, 0), // NX NZ
-            makeGrid(-1, 0, SIZE_MINUS_ONE, SIZE), // NX PZ
-            makeGrid(SIZE_MINUS_ONE, SIZE, SIZE_MINUS_ONE, SIZE), // PX PZ
-            makeGrid(SIZE_MINUS_ONE, SIZE, -1, 0), // PX NZ
+            makeGrid(0, SIZE_MINUS_ONE, 0, SIZE_MINUS_ONE, -1), // Center
+            makeGrid(-1, 0, 0, SIZE_MINUS_ONE, -1), // Negative x
+            makeGrid(SIZE_MINUS_ONE, SIZE, 0, SIZE_MINUS_ONE, -1), // Positive x
+            makeGrid(0, SIZE_MINUS_ONE, -1, 0, -1), // Negative z
+            makeGrid(0, SIZE_MINUS_ONE, SIZE_MINUS_ONE, SIZE, -1), // Positive z
+            makeGrid(-1, 0, -1, 0, -1), // NX NZ
+            makeGrid(-1, 0, SIZE_MINUS_ONE, SIZE, -1), // NX PZ
+            makeGrid(SIZE_MINUS_ONE, SIZE, SIZE_MINUS_ONE, SIZE, -1), // PX PZ
+            makeGrid(SIZE_MINUS_ONE, SIZE, -1, 0, -1), // PX NZ
     };
 
-    private static VoxelShape makeGrid(int startX, int endX, int startZ, int endZ) {
+    public static VoxelShape makeGrid(int startX, int endX, int startZ, int endZ, int yPos) {
         var shapes = new ArrayList<VoxelShape>();
         for (int x = startX; x < endX; x++) {
             for (int z = startZ; z < endZ; z++) {
-                shapes.add(CircuitHelper.createShape(CLICK_TILE_AABB, new ComponentPos(x, -1, z), ComponentSlot.DEFAULT));
+                shapes.add(CircuitHelper.createShape(CLICK_TILE_AABB, new ComponentPos(x, yPos, z), ComponentSlot.DEFAULT));
             }
         }
         return MergedShape.ofMerged(shapes);

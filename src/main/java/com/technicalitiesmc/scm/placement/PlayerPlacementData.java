@@ -2,8 +2,10 @@ package com.technicalitiesmc.scm.placement;
 
 import com.technicalitiesmc.lib.circuit.placement.ComponentPlacement;
 import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
+import com.technicalitiesmc.scm.block.CircuitBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class PlayerPlacementData {
 
@@ -32,15 +34,16 @@ public class PlayerPlacementData {
         return hand;
     }
 
-    public void set(ComponentPlacement.Instance placement, PlacementContext.Client context, BlockPos pos, InteractionHand hand) {
+    public void set(ComponentPlacement.Instance placement, PlacementContext.Client context, BlockPos pos, InteractionHand hand, VoxelShape boundingBoxOverride) {
         this.placement = placement;
         this.context = context;
         this.pos = pos;
         this.hand = hand;
+        CircuitBlock.boundingBoxOverride = boundingBoxOverride;
     }
 
     public void reset() {
-        set(null, null, null, null);
+        set(null, null, null, null, null);
     }
 
 }

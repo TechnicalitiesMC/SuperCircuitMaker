@@ -76,7 +76,8 @@ public class ComponentPlacementHandler {
             }
             context = new SimpleClientContext(player, hand, ct);
 
-            data.set(placement, context, pos, hand);
+            var overrideShape = placement.createOverrideShape(context, hitPos.toAbsolute().pos(), VecDirection.fromDirection(hit.getDirection()), hit);
+            data.set(placement, context, pos, hand, overrideShape);
         }
 
         if (placement.tick(context, hitPos.toAbsolute().pos().offset(pos.subtract(data.getPos()).multiply(SIZE)), VecDirection.fromDirection(hit.getDirection()))) {

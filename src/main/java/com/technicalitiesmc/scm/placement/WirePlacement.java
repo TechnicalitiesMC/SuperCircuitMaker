@@ -2,22 +2,28 @@ package com.technicalitiesmc.scm.placement;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import com.technicalitiesmc.lib.circuit.component.CircuitComponent;
-import com.technicalitiesmc.lib.circuit.component.ComponentContext;
-import com.technicalitiesmc.lib.circuit.component.ComponentState;
-import com.technicalitiesmc.lib.circuit.component.ComponentType;
+import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.placement.ComponentPlacement;
 import com.technicalitiesmc.lib.circuit.placement.PlacementContext;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
+import com.technicalitiesmc.scm.block.CircuitBlock;
+import com.technicalitiesmc.scm.component.misc.PlatformComponent;
+import com.technicalitiesmc.scm.init.SCMComponents;
+import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.RegistryObject;
 
+import javax.annotation.Nullable;
 import java.util.*;
+
+import static com.technicalitiesmc.scm.circuit.CircuitHelper.SIZE;
 
 public class WirePlacement implements ComponentPlacement {
 
@@ -38,12 +44,16 @@ public class WirePlacement implements ComponentPlacement {
 
     @Override
     public Instance deserialize(FriendlyByteBuf buf) {
-        var count = buf.readInt();
         var instance = new Instance();
+        var count = buf.readInt();
         for (var i = 0; i < count; i++) {
             var pos = buf.readBlockPos();
             var sides = VecDirectionFlags.deserialize(buf.readByte());
             instance.connectionMap.put(pos, sides);
+        }
+        var supportCount = buf.readInt();
+        for (var i = 0; i < supportCount; i++) {
+            instance.supports.add(buf.readBlockPos());
         }
         instance.disconnectOthers = buf.readBoolean();
         return instance;
@@ -52,17 +62,26 @@ public class WirePlacement implements ComponentPlacement {
     private class Instance implements ComponentPlacement.Instance {
 
         private final Set<Vec3i> uniquePositions = new HashSet<>();
+        private final Set<Vec3i> supports = new HashSet<>();
         private final List<Vec3i> positions = new ArrayList<>();
         private final List<VecDirectionFlags> connections = new ArrayList<>();
         private final Map<Vec3i, VecDirectionFlags> connectionMap = new HashMap<>();
         private boolean disconnectOthers;
 
+        @Nullable
+        @Override
+        public VoxelShape createOverrideShape(PlacementContext.Client context, Vec3i clickedPos, VecDirection clickedFace, HitResult hit) {
+            var pos = clickedPos.offset(clickedFace.getOffset());
+            var supportPos = pos.below();
+            return CircuitBlock.makeGrid(-1, SIZE, -1, SIZE, supportPos.getY());
+        }
+
         @Override
         public boolean tick(PlacementContext.Client context, Vec3i clickedPos, VecDirection clickedFace) {
             disconnectOthers = context.isModifierPressed();
             var pos = clickedPos.offset(clickedFace.getOffset());
-            // If the component below is not solid or the wire wouldn't fit here, skip
-            if (!context.isTopSolid(pos.below()) || !context.canPlace(pos, component.get())) {
+            // If the wire wouldn't fit here, skip
+            if (!context.canPlace(pos, component.get())) {
                 return !positions.isEmpty();
             }
 
@@ -77,7 +96,11 @@ public class WirePlacement implements ComponentPlacement {
                 // If we have backtracked up to 3 positions, remove them
                 if (idx > positions.size() - 4) {
                     var start = Math.max(0, idx + 1);
-                    positions.subList(start, positions.size()).clear();
+                    var backtracked = positions.subList(start, positions.size());
+                    for (var bPos : backtracked) {
+                        supports.remove(bPos.below());
+                    }
+                    backtracked.clear();
                     connections.subList(start, connections.size()).clear();
                     uniquePositions.clear();
                     uniquePositions.addAll(positions);
@@ -91,6 +114,16 @@ public class WirePlacement implements ComponentPlacement {
 
             if (!context.getPlayer().isCreative() && uniquePositions.size() >= context.getStack().getCount()) {
                 return true;
+            }
+
+            if (!context.isTopSolid(pos.below())) {
+                if (context.get(pos.below(), ComponentSlot.SUPPORT) != null) {
+                    return true;
+                }
+                if (!context.getPlayer().isCreative() && context.getPlayer().getInventory().countItem(SCMItems.PLATFORM.get()) < supports.size() + 1) {
+                    return true;
+                }
+                supports.add(pos.below());
             }
 
             // If we are on a new position or too far from the last hit, add it to the history
@@ -153,6 +186,10 @@ public class WirePlacement implements ComponentPlacement {
                 buf.writeBlockPos(new BlockPos(pos));
                 buf.writeByte(sides.serialize());
             });
+            buf.writeInt(supports.size());
+            supports.forEach(pos -> {
+                buf.writeBlockPos(new BlockPos(pos));
+            });
             buf.writeBoolean(disconnectOthers);
         }
 
@@ -160,13 +197,23 @@ public class WirePlacement implements ComponentPlacement {
         public void place(PlacementContext.Server context) {
             if (context.tryPutAll(ctx -> {
                 for (var entry : connectionMap.entrySet()) {
-                    if (!ctx.at(entry.getKey(), component.get(), c -> factory.create(c, entry.getValue(), disconnectOthers, context.getPlayer()))) {
+                    var pos = entry.getKey();
+                    var below = pos.below();
+                    if (supports.contains(below)) {
+                        if (!ctx.at(below, SCMComponents.PLATFORM.get(), PlatformComponent::new)) {
+                            return false;
+                        }
+                    }
+                    if (!ctx.at(pos, component.get(), c -> factory.create(c, entry.getValue(), disconnectOthers, context.getPlayer()))) {
                         return false;
                     }
                 }
                 return true;
             })) {
                 context.consumeItems(connectionMap.size());
+                if (!supports.isEmpty()) {
+                    context.consumeItems(SCMItems.PLATFORM.get(), supports.size());
+                }
                 context.playSound();
             }
         }
@@ -178,6 +225,9 @@ public class WirePlacement implements ComponentPlacement {
             connectionMap.forEach((pos, connections) -> {
                 builder.put(pos, stateFactory.create(connections, player));
             });
+            for (var pos : supports) {
+                builder.put(pos, SCMComponents.PLATFORM.get().getDefaultState());
+            }
             return builder.build();
         }
 
