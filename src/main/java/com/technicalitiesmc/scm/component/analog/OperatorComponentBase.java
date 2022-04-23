@@ -133,7 +133,7 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
     }
 
     private int getSecondaryInput() {
-        return INPUT_SIDES.except(direction).stream(VecDirection.class)
+        return INPUT_SIDES.except(direction).stream()
                 .mapToInt(this::getStrongInput)
                 .max().orElse(0);
     }

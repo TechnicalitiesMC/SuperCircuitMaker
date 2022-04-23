@@ -2,6 +2,7 @@ package com.technicalitiesmc.scm.block;
 
 import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.block.BlockComponentData;
+import com.technicalitiesmc.lib.block.CustomBlockHighlight;
 import com.technicalitiesmc.lib.block.TKBlock;
 import com.technicalitiesmc.lib.block.TKBlockEntity;
 import com.technicalitiesmc.lib.block.component.BlockData;
@@ -81,7 +82,7 @@ import java.util.UUID;
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.SIZE;
 import static com.technicalitiesmc.scm.circuit.CircuitHelper.SIZE_MINUS_ONE;
 
-public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
+public class CircuitBlock extends TKBlock.WithEntity implements Multipart, CustomBlockHighlight {
 
     private static final Capability<CircuitBlock.Data> DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
@@ -367,7 +368,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         return CircuitHelper.resolvePositionFromShapeIndex(hit.getIndex());
     }
 
-    public static class Data extends BlockComponentData implements ServerTileAccessor.Host, ClientTile.Host {
+    public static class Data extends BlockComponentData<BlockData<?>> implements ServerTileAccessor.Host, ClientTile.Host {
 
         private final LazyOptional<Data> self = LazyOptional.of(() -> this);
 

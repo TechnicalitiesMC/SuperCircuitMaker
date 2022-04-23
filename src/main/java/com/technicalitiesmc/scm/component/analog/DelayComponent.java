@@ -125,7 +125,7 @@ public class DelayComponent extends CircuitComponentBase<DelayComponent> {
     }
 
     private int getInput() {
-        return INPUT_SIDES.stream(VecDirection.class)
+        return INPUT_SIDES.stream()
                 .mapToInt(this::getStrongInput)
                 .max().orElse(0);
     }

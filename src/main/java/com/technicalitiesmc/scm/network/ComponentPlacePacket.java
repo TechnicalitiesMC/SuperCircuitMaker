@@ -14,8 +14,10 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -136,6 +138,14 @@ public class ComponentPlacePacket implements Packet {
         public void consumeItems(int count) {
             if (!isCreative) {
                 item.shrink(count);
+            }
+        }
+
+        @Override
+        public void consumeItems(Item item, int count) {
+            if (!isCreative) {
+                var inventory = player.getInventory();
+                ContainerHelper.clearOrCountMatchingItems(inventory, s -> s.is(item), count, false);
             }
         }
 
