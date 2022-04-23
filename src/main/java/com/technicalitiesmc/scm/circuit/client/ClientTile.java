@@ -155,7 +155,7 @@ public class ClientTile implements TileAccessor {
         }
     }
 
-    public CircuitModelData getModelData() {
+    public CircuitModelData getModelData(boolean hideComponents) {
         var builder = ImmutableMultimap.<Vec3i, ComponentState>builder();
         for (int i = 0; i < TOTAL_POSITIONS; i++) {
             var state = components[i];
@@ -164,7 +164,7 @@ public class ClientTile implements TileAccessor {
                 builder.put(pos.toAbsolute().pos(), state);
             }
         }
-        return new CircuitModelData(builder.build(), adjacency);
+        return new CircuitModelData(builder.build(), adjacency, hideComponents);
     }
 
     public static ClientTile fromDescription(Host host, CompoundTag tag) {

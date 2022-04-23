@@ -22,6 +22,7 @@ import com.technicalitiesmc.scm.circuit.server.ServerTileAccessor;
 import com.technicalitiesmc.scm.circuit.util.ComponentPos;
 import com.technicalitiesmc.scm.circuit.util.ComponentSlotPos;
 import com.technicalitiesmc.scm.circuit.util.TilePos;
+import com.technicalitiesmc.scm.client.ClientConfig;
 import com.technicalitiesmc.scm.client.model.CircuitModelData;
 import com.technicalitiesmc.scm.init.SCMBlockEntities;
 import com.technicalitiesmc.scm.init.SCMBlocks;
@@ -213,7 +214,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         var data = this.data.at(level, pos, state);
         var baseShape = getBaseShape(state);
-        if (data == null) {
+        if (data == null || data.hideComponents) {
             return baseShape;
         }
         var accessor = data.getOrCreateAccessor();
@@ -295,6 +296,16 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
     public InteractionResult onClientUse(BlockState state, ClientLevel level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         var hitPos = resolveHit(hit);
         if (hitPos == null || hitPos.pos().y() == -1) {
+            if (ClientConfig.Debug.allowHidingComponents.get() &&
+                    player.getMainHandItem().is(SCMItemTags.DBG_HIDES_COMPONENTS)
+            ) {
+                var data = this.data.at(level, pos, state);
+                if (data != null) {
+                    data.hideComponents = !data.hideComponents;
+                    data.onUpdateReceived();
+                }
+                return InteractionResult.SUCCESS;
+            }
             return InteractionResult.PASS;
         }
 
@@ -366,6 +377,9 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         private final int[] inputs = new int[4];
         private final int[] outputs = new int[4];
 
+        @Deprecated // Temporary, clientside-only
+        private boolean hideComponents;
+
         @Nullable
         private TileAccessor accessor;
 
@@ -425,7 +439,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart {
         public void addModelData(ModelDataMap.Builder builder) {
             var accessor = getOrCreateAccessor(null);
             if (accessor instanceof ClientTile ct) {
-                builder.withInitial(CircuitModelData.PROPERTY, ct.getModelData());
+                builder.withInitial(CircuitModelData.PROPERTY, ct.getModelData(hideComponents));
             }
         }
 

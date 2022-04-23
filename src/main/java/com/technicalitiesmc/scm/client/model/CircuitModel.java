@@ -84,7 +84,7 @@ public class CircuitModel implements IDynamicBakedModel {
         }
 
         var data = extraData.getData(CircuitModelData.PROPERTY);
-        if (data == null || data.getStates().isEmpty()) {
+        if (data == null || data.getStates().isEmpty() || data.shouldHideComponents()) {
             return getParentQuads(state, side, rand, extraData);
         }
 

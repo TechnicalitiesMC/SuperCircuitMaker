@@ -12,10 +12,12 @@ public class CircuitModelData {
 
     private final Multimap<Vec3i, ComponentState> states;
     private final CircuitAdjacency[] adjacency;
+    private boolean hideComponents;
 
-    public CircuitModelData(Multimap<Vec3i, ComponentState> states, CircuitAdjacency[] adjacency) {
+    public CircuitModelData(Multimap<Vec3i, ComponentState> states, CircuitAdjacency[] adjacency, boolean hideComponents) {
         this.states = states;
         this.adjacency = adjacency;
+        this.hideComponents = hideComponents;
     }
 
     public Multimap<Vec3i, ComponentState> getStates() {
@@ -24,6 +26,10 @@ public class CircuitModelData {
 
     public CircuitAdjacency[] getAdjacency() {
         return adjacency;
+    }
+
+    public boolean shouldHideComponents() {
+        return hideComponents;
     }
 
 }
