@@ -13,6 +13,7 @@ import com.technicalitiesmc.lib.circuit.component.ComponentHarvestContext;
 import com.technicalitiesmc.lib.circuit.component.ComponentSlot;
 import com.technicalitiesmc.lib.circuit.component.ComponentState;
 import com.technicalitiesmc.lib.math.*;
+import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.circuit.CircuitAdjacency;
 import com.technicalitiesmc.scm.circuit.CircuitHelper;
 import com.technicalitiesmc.scm.circuit.TileAccessor;
@@ -42,7 +43,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -522,9 +522,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
 
         @Override
         public void drop(ItemStack stack) {
-            var level = getLevel();
-            var pos = getBlockPos();
-            level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack));
+            Utils.dropItemAt(getLevel(), getBlockPos(), stack);
         }
 
         @Override
