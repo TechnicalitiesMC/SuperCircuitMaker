@@ -104,6 +104,15 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
         );
     }
 
+    @Nullable
+    @Override
+    public Object getInterface(Class<?> itf) {
+        if (itf == CustomBlockHighlight.class) {
+            return this;
+        }
+        return super.getInterface(itf);
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(DIRECTION);

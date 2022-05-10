@@ -1,6 +1,5 @@
 package com.technicalitiesmc.scm.component.wire;
 
-import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.BundledSink;
 import com.technicalitiesmc.lib.circuit.interfaces.BundledSource;
@@ -9,15 +8,11 @@ import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -258,15 +253,6 @@ public class VerticalBundledWireComponent extends VerticalWireComponentBase<Vert
         @Override
         public ItemStack getPickedItem(ComponentState state) {
             return new ItemStack(SCMItems.RGB_REDSTONE_STICK.get());
-        }
-
-        @Override
-        public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
-            var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
-                return InteractionResult.sidedSuccess(true);
-            }
-            return super.use(state, player, hand, sideHit, hit);
         }
 
     }

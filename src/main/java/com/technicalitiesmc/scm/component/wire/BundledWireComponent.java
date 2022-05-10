@@ -295,7 +295,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
         @Override
         public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
             var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+            if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
                 return InteractionResult.sidedSuccess(true);
             }
             return super.use(state, player, hand, sideHit, hit);

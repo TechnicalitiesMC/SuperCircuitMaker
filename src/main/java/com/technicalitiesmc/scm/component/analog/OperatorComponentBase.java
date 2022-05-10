@@ -93,7 +93,7 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+        if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
             var newDirection =direction.applyY(Rotation.CLOCKWISE_90);
             updateExternalState(true, () -> {
                 direction = newDirection;
@@ -170,7 +170,7 @@ public abstract class OperatorComponentBase extends CircuitComponentBase<Operato
         @Override
         public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
             var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+            if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
                 return InteractionResult.sidedSuccess(true);
             }
             return super.use(state, player, hand, sideHit, hit);

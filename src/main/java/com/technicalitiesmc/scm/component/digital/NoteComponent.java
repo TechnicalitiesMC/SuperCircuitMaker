@@ -88,7 +88,7 @@ public class NoteComponent extends DigitalComponentBase<NoteComponent> {
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+        if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
             var newNote = (note + 1) % 24;
             updateExternalState(false, () -> {
                 note = newNote;

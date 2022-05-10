@@ -126,7 +126,7 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
 
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
-        if (player.getItemInHand(hand).is(SCMItemTags.ROTATES_COMPONENTS)) {
+        if (player.getItemInHand(hand).is(SCMItemTags.WRENCHES)) {
             rotate();
         } else {
             toggle();

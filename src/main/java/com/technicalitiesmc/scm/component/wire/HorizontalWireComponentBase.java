@@ -47,7 +47,7 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.is(SCMItemTags.ROTATES_COMPONENTS)) {
+        if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
             // Calculate which side the player is interacting with
             var side = sideHit.getAxis() != Direction.Axis.Y ? sideHit :
                     Utils.calculatePlanarDirection(hit.x() - 0.5f, hit.z() - 0.5f);
