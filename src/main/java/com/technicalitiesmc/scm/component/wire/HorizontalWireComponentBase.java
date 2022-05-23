@@ -5,11 +5,11 @@ import com.technicalitiesmc.lib.circuit.component.CircuitComponent;
 import com.technicalitiesmc.lib.circuit.component.ComponentContext;
 import com.technicalitiesmc.lib.circuit.component.ComponentEventMap;
 import com.technicalitiesmc.lib.circuit.component.ComponentType;
+import com.technicalitiesmc.lib.init.TKLibItemTags;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.lib.util.Utils;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +47,7 @@ public abstract class HorizontalWireComponentBase<T extends HorizontalWireCompon
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
+        if (!stack.isEmpty() && stack.is(TKLibItemTags.TOOLS_WRENCH)) {
             // Calculate which side the player is interacting with
             var side = sideHit.getAxis() != Direction.Axis.Y ? sideHit :
                     Utils.calculatePlanarDirection(hit.x() - 0.5f, hit.z() - 0.5f);

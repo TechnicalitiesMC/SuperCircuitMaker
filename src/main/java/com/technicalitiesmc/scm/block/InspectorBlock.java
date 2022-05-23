@@ -45,7 +45,7 @@ public class InspectorBlock extends TKBlock.WithEntity {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    private final BlockData<Data> data = addComponent("data", ctx -> new BlockData<>(ctx, Data::new));
+    private final BlockData<Data> data = addComponent("data", BlockData.of(Data::new));
 
     public InspectorBlock() {
         super(

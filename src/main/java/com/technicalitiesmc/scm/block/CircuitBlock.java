@@ -93,7 +93,7 @@ public class CircuitBlock extends TKBlock.WithEntity implements Multipart, Custo
     public static boolean picking;
     public static VoxelShape boundingBoxOverride;
 
-    private final BlockData<Data> data = addComponent("circuit", ctx -> new BlockData<>(ctx, Data::new));
+    private final BlockData<Data> data = addComponent("circuit", BlockData.of(Data::new));
 
     public CircuitBlock() {
         super(

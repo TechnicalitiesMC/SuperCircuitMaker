@@ -4,11 +4,11 @@ import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSource;
+import com.technicalitiesmc.lib.init.TKLibItemTags;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -126,7 +126,7 @@ public class LeverComponent extends DigitalComponentBase<LeverComponent> {
 
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
-        if (player.getItemInHand(hand).is(SCMItemTags.WRENCHES)) {
+        if (player.getItemInHand(hand).is(TKLibItemTags.TOOLS_WRENCH)) {
             rotate();
         } else {
             toggle();

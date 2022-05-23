@@ -3,10 +3,10 @@ package com.technicalitiesmc.scm.component.digital;
 import com.mojang.math.Vector3f;
 import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.RedstoneSink;
+import com.technicalitiesmc.lib.init.TKLibItemTags;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
@@ -88,7 +88,7 @@ public class NoteComponent extends DigitalComponentBase<NoteComponent> {
     @Override
     public InteractionResult use(Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
         var stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
+        if (!stack.isEmpty() && stack.is(TKLibItemTags.TOOLS_WRENCH)) {
             var newNote = (note + 1) % 24;
             updateExternalState(false, () -> {
                 note = newNote;

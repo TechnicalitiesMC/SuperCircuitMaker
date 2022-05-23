@@ -5,11 +5,11 @@ import com.technicalitiesmc.lib.circuit.component.*;
 import com.technicalitiesmc.lib.circuit.interfaces.BundledSink;
 import com.technicalitiesmc.lib.circuit.interfaces.BundledSource;
 import com.technicalitiesmc.lib.circuit.interfaces.wire.*;
+import com.technicalitiesmc.lib.init.TKLibItemTags;
 import com.technicalitiesmc.lib.math.VecDirection;
 import com.technicalitiesmc.lib.math.VecDirectionFlags;
 import com.technicalitiesmc.scm.component.InterfaceLookup;
 import com.technicalitiesmc.scm.init.SCMComponents;
-import com.technicalitiesmc.scm.init.SCMItemTags;
 import com.technicalitiesmc.scm.init.SCMItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntArrayTag;
@@ -295,7 +295,7 @@ public class BundledWireComponent extends HorizontalWireComponentBase<BundledWir
         @Override
         public InteractionResult use(ComponentState state, Player player, InteractionHand hand, VecDirection sideHit, Vector3f hit) {
             var stack = player.getItemInHand(hand);
-            if (!stack.isEmpty() && stack.is(SCMItemTags.WRENCHES)) {
+            if (!stack.isEmpty() && stack.is(TKLibItemTags.TOOLS_WRENCH)) {
                 return InteractionResult.sidedSuccess(true);
             }
             return super.use(state, player, hand, sideHit, hit);
