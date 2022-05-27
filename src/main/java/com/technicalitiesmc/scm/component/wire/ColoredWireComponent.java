@@ -323,6 +323,12 @@ public class ColoredWireComponent extends HorizontalWireComponentBase<ColoredWir
             if (!stack.isEmpty() && (stack.is(TKLibItemTags.TOOLS_WRENCH) || Utils.getDyeColor(stack) != null)) {
                 return InteractionResult.sidedSuccess(true);
             }
+            if (hand == InteractionHand.MAIN_HAND && stack.is(SCMItems.TINY_REDSTONE.get())) {
+                var offHandStack = player.getOffhandItem();
+                if (Utils.getDyeColor(offHandStack) != null) {
+                    return InteractionResult.FAIL;
+                }
+            }
             return super.use(state, player, hand, sideHit, hit);
         }
 
