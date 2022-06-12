@@ -1,0 +1,51 @@
+{
+  "itemGroup.supercircuitmaker": "Super Circuit Maker",
+
+  "block.supercircuitmaker.circuit": "Schaltkreis",
+  "block.supercircuitmaker.inspector": "Inspektor",
+  "item.supercircuitmaker.screwdriver": "Schraubendreher",
+  "item.supercircuitmaker.palette": "Palette und Pinsel",
+  "item.supercircuitmaker.tiny_redstone": "Kleiner Haufen von Redstone Staub",
+  "item.supercircuitmaker.tiny_rgb_redstone": "Kleiner Haufen von buntem Redstone Staub",
+  "item.supercircuitmaker.randomizer": "Glowstone-Erreger",
+  "item.supercircuitmaker.delay": "Quartz-Resonator",
+  "item.supercircuitmaker.pulsar": "Ender-Pulsar",
+  "item.supercircuitmaker.note": "Booper",
+  "item.supercircuitmaker.lamp": "Miniaturlampe",
+  "item.supercircuitmaker.button": "Miniaturknopf",
+  "item.supercircuitmaker.adder": "Addierer",
+  "item.supercircuitmaker.subtractor": "Subtrahierer",
+  "item.supercircuitmaker.multiplier": "Multiplikator",
+  "item.supercircuitmaker.divider": "Teiler",
+  "item.supercircuitmaker.constant": "Konstante",
+  "item.supercircuitmaker.platform": "Support-Plattform",
+  "item.supercircuitmaker.redstone_stick": "Mit Redstone beschichteter Stock",
+  "item.supercircuitmaker.rgb_redstone_stick": "Mit buntem Redstone beschichteter Stock",
+
+  "container.supercircuitmaker.delay": "Quartz-Resonator: ",
+  "container.supercircuitmaker.pulsar": "Ender-Pulsar: ",
+  "container.supercircuitmaker.timing.dec_10s": "-10s",
+  "container.supercircuitmaker.timing.dec_1s": "-1s",
+  "container.supercircuitmaker.timing.inc_1s": "+1s",
+  "container.supercircuitmaker.timing.inc_10s": "+10s",
+  "container.supercircuitmaker.timing.dec_10t": "-10t",
+  "container.supercircuitmaker.timing.dec_1t": "-1t",
+  "container.supercircuitmaker.timing.inc_1t": "+1t",
+  "container.supercircuitmaker.timing.inc_10t": "+10t",
+
+  "container.supercircuitmaker.constant": "Konstante: ",
+  "container.supercircuitmaker.constant.dec_20": "-20",
+  "container.supercircuitmaker.constant.dec_1": "-1",
+  "container.supercircuitmaker.constant.inc_1": "+1",
+  "container.supercircuitmaker.constant.inc_20": "+20",
+
+  "subtitles.supercircuitmaker.place": "BOOP",
+
+  "key.supercircuitmaker": "Super Circuit Maker",
+  "key.supercircuitmaker.open_palette": "Öffne Palette",
+  "key.supercircuitmaker.component_placement_modifier": "Komponenten Platzierungsmodifikator",
+
+  "msg.supercircuitmaker.inspector.learned": "Gelernt!",
+  "msg.supercircuitmaker.inspector.mode_state": "Ausgewählter Modus: Blockzustand-Überstimmung",
+  "msg.supercircuitmaker.inspector.mode_block": "Ausgewählter Modus: Blockart-Überstimmung"
+}
