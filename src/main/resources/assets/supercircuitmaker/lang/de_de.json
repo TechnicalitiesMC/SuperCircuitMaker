@@ -43,7 +43,7 @@
 
   "key.supercircuitmaker": "Super Circuit Maker",
   "key.supercircuitmaker.open_palette": "Palette öffnen",
-  "key.supercircuitmaker.component_placement_modifier": "Komponenten Platzierungsmodifikator",
+  "key.supercircuitmaker.component_placement_modifier": "Komponenten-Platzierungsmodifikator",
 
   "msg.supercircuitmaker.inspector.learned": "Gelernt!",
   "msg.supercircuitmaker.inspector.mode_state": "Ausgewählter Modus: Blockzustand-Überstimmung",
