@@ -42,7 +42,7 @@
   "subtitles.supercircuitmaker.place": "BOOP",
 
   "key.supercircuitmaker": "Super Circuit Maker",
-  "key.supercircuitmaker.open_palette": "Öffne Palette",
+  "key.supercircuitmaker.open_palette": "Palette öffnen",
   "key.supercircuitmaker.component_placement_modifier": "Komponenten Platzierungsmodifikator",
 
   "msg.supercircuitmaker.inspector.learned": "Gelernt!",
