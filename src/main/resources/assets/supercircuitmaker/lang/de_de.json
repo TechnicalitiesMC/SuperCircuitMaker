@@ -46,6 +46,6 @@
   "key.supercircuitmaker.component_placement_modifier": "Komponenten-Platzierungsmodifikator",
 
   "msg.supercircuitmaker.inspector.learned": "Gelernt!",
-  "msg.supercircuitmaker.inspector.mode_state": "Ausgewählter Modus: Blockzustand-Überstimmung",
-  "msg.supercircuitmaker.inspector.mode_block": "Ausgewählter Modus: Blockart-Überstimmung"
+  "msg.supercircuitmaker.inspector.mode_state": "Ausgewählter Modus: Blockzustand-Übereinstimmung",
+  "msg.supercircuitmaker.inspector.mode_block": "Ausgewählter Modus: Blockart-Übereinstimmung"
 }
