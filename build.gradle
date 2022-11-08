@@ -83,6 +83,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'https://maven.amadornes.com' }
 }
 
 dependencies {
